@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+
+import userAvatar from "@/assets/portrait-marcus.jpg";
 import {
   CalendarHeart,
   GitFork,
@@ -87,7 +89,7 @@ export function AppShell({
 
             <div className="flex items-center gap-2.5 rounded-full border border-white/10 bg-surface py-1 pl-1 pr-3">
               <img
-                src={user_avatar}
+                src={userAvatar}
                 alt=""
                 loading="lazy"
                 width={64}
@@ -131,5 +133,3 @@ export function AppShell({
     </div>
   );
 }
-
-import user_avatar from "@/assets/portrait-marcus.jpg";
