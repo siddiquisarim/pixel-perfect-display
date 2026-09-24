@@ -69,7 +69,7 @@ function EventsPage() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <Badge className="bg-accent text-accent-foreground hover:bg-accent">
-                    {e.event_type[0].toUpperCase() + e.event_type.slice(1)}
+                    {e.event_type.charAt(0).toUpperCase() + e.event_type.slice(1)}
                   </Badge>
                   <h2 className="mt-2 font-display text-xl">{e.title}</h2>
                   <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -207,7 +207,7 @@ function CreateEventDialog() {
                 <SelectContent>
                   {EVENT_TYPES.map((t) => (
                     <SelectItem key={t} value={t}>
-                      {t[0].toUpperCase() + t.slice(1)}
+                      {t.charAt(0).toUpperCase() + t.slice(1)}
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -110,7 +110,7 @@ function TimelinePage() {
                   <div className="flex flex-wrap items-center gap-2.5">
                     <span className="font-display text-2xl text-primary-deep">{e.year}</span>
                     <Badge className={TYPE_TONE[e.event_type]}>
-                      {e.event_type[0].toUpperCase() + e.event_type.slice(1)}
+                      {e.event_type.charAt(0).toUpperCase() + e.event_type.slice(1)}
                     </Badge>
                     <span className="text-xs text-muted-foreground">{personName(e.person_id)}</span>
                   </div>
@@ -174,7 +174,7 @@ function AddEventDrawer({ onAdded }: { onAdded: () => void }) {
                 <SelectContent>
                   {["birth", "marriage", "migration", "death", "custom"].map((t) => (
                     <SelectItem key={t} value={t}>
-                      {t[0].toUpperCase() + t.slice(1)}
+                      {t.charAt(0).toUpperCase() + t.slice(1)}
                     </SelectItem>
                   ))}
                 </SelectContent>
