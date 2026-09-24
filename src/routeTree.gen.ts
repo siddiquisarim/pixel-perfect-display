@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DiscoveryRouteImport } from './routes/discovery'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as MediaRouteImport } from './routes/media'
@@ -19,6 +20,11 @@ import { Route as TimelineRouteImport } from './routes/timeline'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiscoveryRoute = DiscoveryRouteImport.update({
@@ -49,6 +55,7 @@ const TimelineRoute = TimelineRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/discovery': typeof DiscoveryRoute
   '/events': typeof EventsRoute
   '/media': typeof MediaRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/discovery': typeof DiscoveryRoute
   '/events': typeof EventsRoute
   '/media': typeof MediaRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/discovery': typeof DiscoveryRoute
   '/events': typeof EventsRoute
   '/media': typeof MediaRoute
@@ -75,12 +84,26 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/discovery' | '/events' | '/media' | '/settings' | '/timeline'
+    | '/'
+    | '/auth'
+    | '/discovery'
+    | '/events'
+    | '/media'
+    | '/settings'
+    | '/timeline'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/discovery' | '/events' | '/media' | '/settings' | '/timeline'
+  to:
+    | '/'
+    | '/auth'
+    | '/discovery'
+    | '/events'
+    | '/media'
+    | '/settings'
+    | '/timeline'
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/discovery'
     | '/events'
     | '/media'
@@ -90,6 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   DiscoveryRoute: typeof DiscoveryRoute
   EventsRoute: typeof EventsRoute
   MediaRoute: typeof MediaRoute
@@ -104,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/discovery': {
@@ -146,6 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   DiscoveryRoute: DiscoveryRoute,
   EventsRoute: EventsRoute,
   MediaRoute: MediaRoute,
