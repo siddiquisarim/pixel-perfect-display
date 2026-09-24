@@ -54,7 +54,7 @@ const TYPE_TONE: Record<TimelineEventType, string> = {
 };
 
 function TimelinePage() {
-  const { timeline, persons, personName, addTimelineEvent } = useFamily();
+  const { timeline, persons, personName } = useFamily();
   const [filter, setFilter] = useState("all");
 
   const rows = useMemo(

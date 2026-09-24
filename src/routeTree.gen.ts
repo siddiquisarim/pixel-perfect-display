@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DiscoveryRouteImport } from './routes/discovery'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as MediaRouteImport } from './routes/media'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TimelineRouteImport } from './routes/timeline'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +31,16 @@ const EventsRoute = EventsRouteImport.update({
   path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MediaRoute = MediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TimelineRoute = TimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
@@ -39,12 +51,16 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/discovery': typeof DiscoveryRoute
   '/events': typeof EventsRoute
+  '/media': typeof MediaRoute
+  '/settings': typeof SettingsRoute
   '/timeline': typeof TimelineRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/discovery': typeof DiscoveryRoute
   '/events': typeof EventsRoute
+  '/media': typeof MediaRoute
+  '/settings': typeof SettingsRoute
   '/timeline': typeof TimelineRoute
 }
 export interface FileRoutesById {
@@ -52,20 +68,32 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/discovery': typeof DiscoveryRoute
   '/events': typeof EventsRoute
+  '/media': typeof MediaRoute
+  '/settings': typeof SettingsRoute
   '/timeline': typeof TimelineRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/discovery' | '/events' | '/timeline'
+  fullPaths:
+    '/' | '/discovery' | '/events' | '/media' | '/settings' | '/timeline'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/discovery' | '/events' | '/timeline'
-  id: '__root__' | '/' | '/discovery' | '/events' | '/timeline'
+  to: '/' | '/discovery' | '/events' | '/media' | '/settings' | '/timeline'
+  id:
+    | '__root__'
+    | '/'
+    | '/discovery'
+    | '/events'
+    | '/media'
+    | '/settings'
+    | '/timeline'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DiscoveryRoute: typeof DiscoveryRoute
   EventsRoute: typeof EventsRoute
+  MediaRoute: typeof MediaRoute
+  SettingsRoute: typeof SettingsRoute
   TimelineRoute: typeof TimelineRoute
 }
 
@@ -92,6 +120,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/media': {
+      id: '/media'
+      path: '/media'
+      fullPath: '/media'
+      preLoaderRoute: typeof MediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/timeline': {
       id: '/timeline'
       path: '/timeline'
@@ -106,6 +148,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DiscoveryRoute: DiscoveryRoute,
   EventsRoute: EventsRoute,
+  MediaRoute: MediaRoute,
+  SettingsRoute: SettingsRoute,
   TimelineRoute: TimelineRoute,
 }
 export const routeTree = rootRouteImport
