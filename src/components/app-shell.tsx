@@ -101,6 +101,9 @@ export function AppShell({
                 <p className="text-[11px] text-foreground/50">{user.birth_place}</p>
               </div>
             </div>
+            <Link to="/auth" className="text-xs font-medium text-foreground/60 hover:text-primary">
+              Sign out
+            </Link>
           </div>
         </div>
 
