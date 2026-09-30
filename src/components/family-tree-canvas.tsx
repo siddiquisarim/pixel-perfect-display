@@ -10,7 +10,7 @@ import {
   Plus,
   ShieldCheck,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -218,7 +218,20 @@ export function FamilyTreeCanvas({
   onSelect: (id: string) => void;
 }) {
   const [zoom, setZoom] = useState(1);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const layout = useMemo(() => createLayout(persons, relationships), [persons, relationships]);
+
+  const centerOnRoot = () => {
+    const viewport = viewportRef.current;
+    const root = layout.positions.get(ROOT_ID);
+    if (!viewport || !root) return;
+    viewport.scrollTo({ left: Math.max(0, root.x * zoom - viewport.clientWidth / 2), behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(centerOnRoot);
+    return () => window.cancelAnimationFrame(frame);
+  }, [layout, zoom]);
 
   const lineageIds = useMemo(() => {
     if (!selectedId) return new Set<string>();
@@ -253,12 +266,12 @@ export function FamilyTreeCanvas({
           <div className="flex shrink-0 items-center gap-1 border border-tree-line/60 bg-background/75 p-1 shadow-lg backdrop-blur">
             <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Zoom in" className="text-foreground hover:bg-surface" onClick={() => setZoom((value) => Math.min(1.3, value + 0.1))}><Plus /></Button></TooltipTrigger><TooltipContent>Zoom in</TooltipContent></Tooltip>
             <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Zoom out" className="text-foreground hover:bg-surface" onClick={() => setZoom((value) => Math.max(0.65, value - 0.1))}><Minus /></Button></TooltipTrigger><TooltipContent>Zoom out</TooltipContent></Tooltip>
-            <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Fit tree" className="text-foreground hover:bg-surface" onClick={() => setZoom(1)}><Maximize2 /></Button></TooltipTrigger><TooltipContent>Actual size</TooltipContent></Tooltip>
+            <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Center tree" className="text-foreground hover:bg-surface" onClick={centerOnRoot}><Maximize2 /></Button></TooltipTrigger><TooltipContent>Center on you</TooltipContent></Tooltip>
           </div>
         </TooltipProvider>
       </div>
 
-      <div className="overflow-auto">
+      <div ref={viewportRef} className="overflow-auto">
         <div
           className="relative origin-top-left transition-transform duration-300 motion-reduce:transition-none"
           style={{ width: layout.width, height: layout.height, transform: `scale(${zoom})`, marginRight: `${(zoom - 1) * layout.width}px`, marginBottom: `${(zoom - 1) * layout.height}px` }}

@@ -5,5 +5,5 @@
 - [x] Show each person's relationship and life timeline as fruit nodes and event leaves
 - [x] Preserve profile, add-relative, privacy, and life-event interactions
 - [x] Verify the redesigned tree on desktop and mobile
-- [ ] Replace fixed positions with automatic generation-based expansion
-- [ ] Refine the tree from illustrative to archival and verify add-relative growth
+- [x] Replace fixed positions with automatic generation-based expansion
+- [x] Refine the tree from illustrative to archival and verify add-relative growth
