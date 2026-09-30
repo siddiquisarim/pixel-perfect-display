@@ -181,9 +181,9 @@ export function FamilyTreeCanvas({
 
       <TooltipProvider delayDuration={200}>
         <div className="absolute right-4 top-4 z-40 flex items-center gap-1 rounded-md border border-tree-line/60 bg-background/85 p-1 shadow-lg backdrop-blur">
-          <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" className="text-foreground hover:bg-surface" onClick={() => setZoom((value) => Math.min(1.2, value + 0.1))}><Plus /></Button></TooltipTrigger><TooltipContent>Zoom in</TooltipContent></Tooltip>
-          <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" className="text-foreground hover:bg-surface" onClick={() => setZoom((value) => Math.max(0.75, value - 0.1))}><Minus /></Button></TooltipTrigger><TooltipContent>Zoom out</TooltipContent></Tooltip>
-          <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" className="text-foreground hover:bg-surface" onClick={() => setZoom(1)}><Maximize2 /></Button></TooltipTrigger><TooltipContent>Fit tree</TooltipContent></Tooltip>
+          <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Zoom in" className="text-foreground hover:bg-surface" onClick={() => setZoom((value) => Math.min(1.2, value + 0.1))}><Plus /></Button></TooltipTrigger><TooltipContent>Zoom in</TooltipContent></Tooltip>
+          <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Zoom out" className="text-foreground hover:bg-surface" onClick={() => setZoom((value) => Math.max(0.75, value - 0.1))}><Minus /></Button></TooltipTrigger><TooltipContent>Zoom out</TooltipContent></Tooltip>
+          <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Fit tree" className="text-foreground hover:bg-surface" onClick={() => setZoom(1)}><Maximize2 /></Button></TooltipTrigger><TooltipContent>Fit tree</TooltipContent></Tooltip>
         </div>
       </TooltipProvider>
 
