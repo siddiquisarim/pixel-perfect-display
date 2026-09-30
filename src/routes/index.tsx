@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CalendarPlus, Link2, Plus, UserPlus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/app-shell";
-import { PersonNode, initialsOf } from "@/components/person-node";
+import { FamilyTreeCanvas } from "@/components/family-tree-canvas";
+import { initialsOf } from "@/components/person-node";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -62,46 +63,10 @@ const RELATION_LABELS: Record<RelationshipType, string> = {
   spouse: "Spouse",
 };
 
-const GEN_LABELS: Record<number, string> = {
-  [-2]: "Grandparents",
-  [-1]: "Parents",
-  0: "Your generation",
-  1: "Children",
-  2: "Grandchildren",
-};
-
 function FamilyTreePage() {
   const { persons, relationships, addPerson, addTimelineEvent, timeline, privacy } = useFamily();
   const [addOpen, setAddOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  const generations = useMemo(() => {
-    const gen = new Map<string, number>();
-    gen.set("p_marcus", 0);
-    for (let pass = 0; pass < 6; pass += 1) {
-      for (const r of relationships) {
-        const a = gen.get(r.person_a_id);
-        const b = gen.get(r.person_b_id);
-        const offset =
-          r.relationship_type === "parent" ? 1 : r.relationship_type === "grandparent" ? 2 : 0;
-        if (a !== undefined && b === undefined) gen.set(r.person_b_id, a + offset);
-        if (b !== undefined && a === undefined) gen.set(r.person_a_id, b - offset);
-      }
-    }
-    const rows = new Map<number, FamilyPerson[]>();
-    for (const p of persons) {
-      const g = gen.get(p.id) ?? 0;
-      rows.set(g, [...(rows.get(g) ?? []), p]);
-    }
-    return [...rows.entries()].sort((x, y) => x[0] - y[0]);
-  }, [persons, relationships]);
-
-  const isVerified = (personId: string) =>
-    relationships.some(
-      (r) =>
-        (r.person_a_id === personId || r.person_b_id === personId) &&
-        r.verification_status === "connected",
-    );
 
   const selected = persons.find((p) => p.id === selectedId) ?? null;
   const selectedEvents = timeline.filter((t) => t.person_id === selectedId);
@@ -109,7 +74,7 @@ function FamilyTreePage() {
   return (
     <AppShell
       title="Family Tree"
-      subtitle="Biological relatives and spouses across your known generations. Select any node to open its profile, add a life event, or generate an invite link."
+      subtitle="A living map of your bloodline. Follow the branches through marriages, births, migrations and new generations."
       action={
         <AddRelativeDialog
           open={addOpen}
@@ -123,33 +88,7 @@ function FamilyTreePage() {
         />
       }
     >
-      <div className="space-y-8">
-        {generations.map(([g, people], rowIndex) => (
-          <section key={g}>
-            <div className="mb-3 flex items-center gap-3">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
-                {GEN_LABELS[g] ?? `Generation ${g}`}
-              </h2>
-              <span className="h-px flex-1 bg-white/10" />
-              <span className="text-xs text-foreground/40">{people.length} records</span>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              {people.map((p) => (
-                <PersonNode
-                  key={p.id}
-                  person={p}
-                  verified={isVerified(p.id)}
-                  isSelf={p.id === "p_marcus"}
-                  onClick={() => setSelectedId(p.id)}
-                />
-              ))}
-            </div>
-            {rowIndex < generations.length - 1 && (
-              <div className="ml-6 mt-6 h-6 w-px bg-white/15" aria-hidden />
-            )}
-          </section>
-        ))}
-      </div>
+      <FamilyTreeCanvas persons={persons} relationships={relationships} timeline={timeline} selectedId={selectedId} onSelect={setSelectedId} />
 
       <Sheet open={Boolean(selected)} onOpenChange={(o) => !o && setSelectedId(null)}>
         <SheetContent className="w-full overflow-y-auto bg-paper text-paper-foreground sm:max-w-md">

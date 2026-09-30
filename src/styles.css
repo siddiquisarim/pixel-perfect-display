@@ -63,10 +63,20 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-tree-night: var(--tree-night);
+  --color-tree-bark: var(--tree-bark);
+  --color-tree-bark-deep: var(--tree-bark-deep);
+  --color-tree-leaf: var(--tree-leaf);
+  --color-tree-leaf-light: var(--tree-leaf-light);
+  --color-tree-leaf-foreground: var(--tree-leaf-foreground);
+  --color-tree-fruit: var(--tree-fruit);
+  --color-tree-line: var(--tree-line);
+  --color-tree-ground: var(--tree-ground);
 
   --shadow-paper: 0 1px 2px oklch(0.15 0.03 265 / 0.08), 0 12px 32px -18px oklch(0.15 0.03 265 / 0.35);
   --shadow-lift: 0 2px 4px oklch(0.15 0.03 265 / 0.1), 0 24px 48px -24px oklch(0.15 0.03 265 / 0.45);
   --shadow-gold: 0 10px 30px -12px oklch(0.667 0.157 58.3 / 0.5);
+  --shadow-tree-fruit: 0 10px 30px -12px oklch(0.12 0.04 142 / 0.75), 0 0 0 6px oklch(0.49 0.1 142 / 0.1);
 }
 
 :root {
@@ -124,6 +134,17 @@
   --sidebar-accent-foreground: oklch(0.96 0.005 247);
   --sidebar-border: oklch(1 0 0 / 12%);
   --sidebar-ring: oklch(0.667 0.157 58.3);
+
+  /* living family tree */
+  --tree-night: oklch(0.19 0.034 248);
+  --tree-bark: oklch(0.41 0.075 58);
+  --tree-bark-deep: oklch(0.29 0.055 52);
+  --tree-leaf: oklch(0.44 0.105 145);
+  --tree-leaf-light: oklch(0.65 0.13 145);
+  --tree-leaf-foreground: oklch(0.97 0.02 145);
+  --tree-fruit: oklch(0.96 0.012 78);
+  --tree-line: oklch(0.55 0.08 93);
+  --tree-ground: oklch(0.25 0.055 75);
 }
 
 @layer base {
@@ -171,4 +192,18 @@
 
 @utility tree-link {
   background-color: var(--color-border-strong);
+}
+
+@keyframes branch-glow {
+  0%, 100% { stroke-opacity: 0.75; }
+  50% { stroke-opacity: 1; }
+}
+
+@utility tree-branch-active {
+  animation: branch-glow 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 5px color-mix(in oklab, var(--color-primary) 55%, transparent));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tree-branch-active { animation: none; }
 }
