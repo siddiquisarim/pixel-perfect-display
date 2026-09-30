@@ -174,7 +174,7 @@ export function FamilyTreeCanvas({
 
   return (
     <section aria-label="Interactive Johnson family tree" className="relative overflow-hidden rounded-lg border border-tree-line/50 bg-tree-night shadow-inner">
-      <div className="absolute left-5 top-5 z-30 max-w-xs">
+      <div className="pointer-events-none absolute left-5 top-5 z-30 max-w-[270px]">
         <p className="font-display text-lg text-foreground">The Johnson family tree</p>
         <p className="mt-1 text-xs leading-relaxed text-foreground/60">Follow each branch from ancestor to descendant. Event leaves mark the moments that shaped the family.</p>
       </div>
