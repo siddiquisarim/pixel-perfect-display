@@ -4,4 +4,4 @@
 - [x] Connect every seeded relationship with clear organic branches and spouse links
 - [x] Show each person's relationship and life timeline as fruit nodes and event leaves
 - [x] Preserve profile, add-relative, privacy, and life-event interactions
-- [ ] Verify the redesigned tree on desktop and mobile
+- [x] Verify the redesigned tree on desktop and mobile
