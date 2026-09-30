@@ -9,4 +9,4 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Render the Family Tree as a responsive SVG-backed organic canvas fed by the shared family store, because relationships and timeline events must remain visibly connected.
+- Render the Family Tree as a responsive, data-derived SVG genealogy canvas with automatic generation spacing, because added relatives must expand the tree without overlaps.
