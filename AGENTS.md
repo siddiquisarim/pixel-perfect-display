@@ -9,4 +9,4 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Render the Family Tree as a responsive, data-derived SVG genealogy canvas with automatic generation spacing, because added relatives must expand the tree without overlaps.
+- Render the Family Tree and each selected person's chronological life-event view as responsive, data-derived SVG trees with automatic spacing, because relatives and events must expand without overlaps.
