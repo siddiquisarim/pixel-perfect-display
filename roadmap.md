@@ -7,3 +7,5 @@
 - [x] Verify the redesigned tree on desktop and mobile
 - [x] Replace fixed positions with automatic generation-based expansion
 - [x] Refine the tree from illustrative to archival and verify add-relative growth
+- [ ] Expand every selected person into a data-derived life-event mini-tree
+- [ ] Verify mini-tree profile, return, empty-event, desktop, and mobile behavior

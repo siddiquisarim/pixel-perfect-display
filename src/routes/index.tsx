@@ -66,10 +66,11 @@ const RELATION_LABELS: Record<RelationshipType, string> = {
 function FamilyTreePage() {
   const { persons, relationships, addPerson, addTimelineEvent, timeline, privacy } = useFamily();
   const [addOpen, setAddOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [focusedId, setFocusedId] = useState<string | null>(null);
+  const [profileId, setProfileId] = useState<string | null>(null);
 
-  const selected = persons.find((p) => p.id === selectedId) ?? null;
-  const selectedEvents = timeline.filter((t) => t.person_id === selectedId);
+  const selected = persons.find((p) => p.id === profileId) ?? null;
+  const selectedEvents = timeline.filter((t) => t.person_id === profileId);
 
   return (
     <AppShell
@@ -88,9 +89,9 @@ function FamilyTreePage() {
         />
       }
     >
-      <FamilyTreeCanvas persons={persons} relationships={relationships} timeline={timeline} selectedId={selectedId} onSelect={setSelectedId} />
+      <FamilyTreeCanvas persons={persons} relationships={relationships} timeline={timeline} selectedId={focusedId} onSelect={setFocusedId} onClearSelection={() => setFocusedId(null)} onOpenProfile={setProfileId} />
 
-      <Sheet open={Boolean(selected)} onOpenChange={(o) => !o && setSelectedId(null)}>
+      <Sheet open={Boolean(selected)} onOpenChange={(o) => !o && setProfileId(null)}>
         <SheetContent className="w-full overflow-y-auto bg-paper text-paper-foreground sm:max-w-md">
           {selected && (
             <>

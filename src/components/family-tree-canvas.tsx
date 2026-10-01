@@ -1,5 +1,7 @@
 import {
+  ArrowLeft,
   Baby,
+  BookOpen,
   CalendarDays,
   Heart,
   LocateFixed,
@@ -204,18 +206,116 @@ function PersonCard({
   );
 }
 
+function FocusedPersonTree({
+  person,
+  events,
+  onBack,
+  onOpenProfile,
+}: {
+  person: FamilyPerson;
+  events: TimelineEvent[];
+  onBack: () => void;
+  onOpenProfile: () => void;
+}) {
+  const [zoom, setZoom] = useState(1);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const orderedEvents = useMemo(() => [...events].sort((a, b) => a.year - b.year), [events]);
+  const width = 1040;
+  const centerX = width / 2;
+  const startY = 165;
+  const eventGap = 170;
+  const height = Math.max(760, startY + 210 + orderedEvents.length * eventGap);
+
+  const centerTree = () => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    viewport.scrollTo({ left: Math.max(0, centerX * zoom - viewport.clientWidth / 2), top: 0, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(centerTree);
+    return () => window.cancelAnimationFrame(frame);
+  }, [zoom]);
+
+  return (
+    <section aria-label={`${person.first_name} ${person.last_name} life tree`} className="relative overflow-hidden rounded-lg border border-tree-line/60 bg-tree-night shadow-inner">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-tree-line/40 bg-background/35 px-3 py-3 sm:px-5">
+        <div className="flex min-w-0 items-center gap-3">
+          <Button variant="ghost" size="icon" aria-label="Back to family tree" className="shrink-0 text-foreground hover:bg-surface" onClick={onBack}><ArrowLeft /></Button>
+          <div className="min-w-0">
+            <p className="truncate font-display text-lg text-foreground">{person.first_name}’s life tree</p>
+            <p className="truncate text-xs text-foreground/60">A chronological branch of recorded milestones</p>
+          </div>
+        </div>
+        <div className="flex shrink-0 items-center gap-1 border border-tree-line/60 bg-background/75 p-1 shadow-lg">
+          <Button variant="ghost" size="icon" aria-label="Zoom in" className="text-foreground hover:bg-surface" onClick={() => setZoom((value) => Math.min(1.25, value + 0.1))}><Plus /></Button>
+          <Button variant="ghost" size="icon" aria-label="Zoom out" className="text-foreground hover:bg-surface" onClick={() => setZoom((value) => Math.max(0.7, value - 0.1))}><Minus /></Button>
+          <Button variant="ghost" size="icon" aria-label="Center life tree" className="text-foreground hover:bg-surface" onClick={centerTree}><Maximize2 /></Button>
+        </div>
+      </div>
+
+      <div ref={viewportRef} className="overflow-auto">
+        <div className="relative origin-top-left transition-transform duration-300 motion-reduce:transition-none" style={{ width, height, transform: `scale(${zoom})`, marginRight: `${(zoom - 1) * width}px`, marginBottom: `${(zoom - 1) * height}px` }}>
+          <svg className="absolute inset-0 h-full w-full" viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
+            <defs>
+              <pattern id="life-archive-grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M 32 0 L 0 0 0 32" className="fill-none stroke-tree-line/10" strokeWidth="1" /></pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#life-archive-grid)" />
+            <path d={`M ${centerX} ${startY + 78} C ${centerX} ${startY + 150}, ${centerX} ${height - 120}, ${centerX} ${height - 70}`} className="fill-none stroke-tree-bark" strokeLinecap="round" strokeWidth="9" />
+            {orderedEvents.map((event, index) => {
+              const y = startY + 235 + index * eventGap;
+              const left = index % 2 === 0;
+              const cardX = left ? centerX - 300 : centerX + 300;
+              return <path key={event.id} d={`M ${centerX} ${y} C ${centerX + (left ? -70 : 70)} ${y}, ${cardX + (left ? 80 : -80)} ${y}, ${cardX} ${y}`} className="fill-none stroke-tree-line" strokeLinecap="round" strokeWidth="3" />;
+            })}
+          </svg>
+
+          <article className="absolute z-20 w-[300px] -translate-x-1/2 -translate-y-1/2 border border-primary bg-paper p-4 text-paper-foreground shadow-gold" style={{ left: centerX, top: startY }}>
+            <div className="flex items-center gap-4">
+              <span className="size-20 shrink-0 overflow-hidden rounded-sm border border-border-strong bg-secondary">
+                {person.avatar_url ? <img src={person.avatar_url} alt="" className="size-full object-cover grayscale-[18%]" /> : <span className="flex size-full items-center justify-center font-display text-xl">{person.first_name.charAt(0)}{person.last_name.charAt(0)}</span>}
+              </span>
+              <div className="min-w-0"><h2 className="font-display text-xl font-semibold">{person.first_name} {person.last_name}</h2><p className="mt-1 text-xs text-muted-foreground">{person.birth_year ? `Born ${person.birth_year}` : "Birth year unknown"} · {person.is_living ? "Living" : "Remembered"}</p>{person.is_minor && <Badge variant="outline" className="mt-2 gap-1"><Lock className="size-3" /> Protected minor</Badge>}</div>
+            </div>
+            <Button className="mt-4 w-full bg-primary text-primary-foreground hover:bg-primary-deep" onClick={onOpenProfile}><BookOpen className="size-4" /> View full profile</Button>
+          </article>
+
+          {orderedEvents.map((event, index) => {
+            const y = startY + 235 + index * eventGap;
+            const left = index % 2 === 0;
+            return (
+              <Button key={event.id} variant="outline" onClick={onOpenProfile} className="absolute z-20 h-auto w-[280px] -translate-x-1/2 -translate-y-1/2 whitespace-normal border-tree-line bg-paper p-0 text-left text-paper-foreground shadow-paper hover:border-primary hover:bg-accent" style={{ left: left ? centerX - 300 : centerX + 300, top: y }}>
+                <span className="grid w-full grid-cols-[66px_minmax(0,1fr)]">
+                  <span className="flex min-h-28 flex-col items-center justify-center border-r border-border bg-secondary px-2"><span className="font-display text-xl text-primary-deep">{event.year}</span><span className="mt-1 text-[8px] font-bold uppercase text-muted-foreground">{EVENT_LABELS[event.event_type]}</span></span>
+                  <span className="min-w-0 p-3"><span className="block font-display text-sm font-semibold leading-snug">{event.title}</span><span className="mt-2 line-clamp-3 block text-[10px] leading-relaxed text-muted-foreground">{event.description || "No additional notes recorded."}</span></span>
+                </span>
+              </Button>
+            );
+          })}
+
+          {orderedEvents.length === 0 && <div className="absolute left-1/2 top-[340px] z-20 w-[280px] -translate-x-1/2 border border-dashed border-tree-line bg-background/70 p-6 text-center text-foreground"><CalendarDays className="mx-auto size-6 text-primary" /><p className="mt-3 font-display text-sm">No life events recorded yet</p><Button variant="link" className="mt-1 text-primary" onClick={onOpenProfile}>Open profile to add one</Button></div>}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function FamilyTreeCanvas({
   persons,
   relationships,
   timeline,
   selectedId,
   onSelect,
+  onClearSelection,
+  onOpenProfile,
 }: {
   persons: FamilyPerson[];
   relationships: Relationship[];
   timeline: TimelineEvent[];
   selectedId: string | null;
   onSelect: (id: string) => void;
+  onClearSelection: () => void;
+  onOpenProfile: (id: string) => void;
 }) {
   const [zoom, setZoom] = useState(1);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -254,6 +354,11 @@ export function FamilyTreeCanvas({
     }
     return new Set([selectedId]);
   }, [relationships, selectedId]);
+
+  const focusedPerson = persons.find((person) => person.id === selectedId);
+  if (focusedPerson) {
+    return <FocusedPersonTree person={focusedPerson} events={timeline.filter((event) => event.person_id === focusedPerson.id)} onBack={onClearSelection} onOpenProfile={() => onOpenProfile(focusedPerson.id)} />;
+  }
 
   return (
     <section aria-label="Interactive Johnson family tree" className="relative overflow-hidden rounded-lg border border-tree-line/60 bg-tree-night shadow-inner">
