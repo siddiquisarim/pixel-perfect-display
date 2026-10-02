@@ -10,3 +10,5 @@
 <!-- LOVABLE:END -->
 
 - Render the Family Tree and each selected person's chronological life-event view as responsive, data-derived SVG trees with automatic spacing, because relatives and events must expand without overlaps.
+
+- Keep the signed-in home as an accepted-connection tree overview and the detailed lineage at `/tree`, because overview portraits must lead into the full family record.

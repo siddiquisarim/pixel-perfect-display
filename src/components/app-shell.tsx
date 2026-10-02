@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import userAvatar from "@/assets/portrait-marcus.jpg";
 import {
   CalendarHeart,
+  Home,
   GitFork,
   Images,
   ScrollText,
@@ -17,7 +18,8 @@ import { useFamily } from "@/lib/family-store";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { to: "/", label: "Family Tree", icon: GitFork },
+  { to: "/", label: "Home", icon: Home },
+  { to: "/tree", label: "Family Tree", icon: GitFork },
   { to: "/discovery", label: "Discovery & Matches", icon: Sparkles },
   { to: "/timeline", label: "Timeline", icon: ScrollText },
   { to: "/events", label: "Events & RSVP", icon: CalendarHeart },
