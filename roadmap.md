@@ -9,3 +9,7 @@
 - [x] Refine the tree from illustrative to archival and verify add-relative growth
 - [x] Expand every selected person into a data-derived life-event mini-tree
 - [x] Verify mini-tree profile, return, empty-event, desktop, and mobile behavior
+- [x] Make the signed-in landing page a modern real-tree relationship network
+- [x] Show only accepted direct connections with category colors and circular portraits
+- [x] Move the detailed lineage canvas to a dedicated Family Tree page
+- [ ] Verify home-to-lineage navigation and responsive layout
