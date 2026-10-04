@@ -12,4 +12,4 @@
 - [x] Make the signed-in landing page a modern real-tree relationship network
 - [x] Show only accepted direct connections with category colors and circular portraits
 - [x] Move the detailed lineage canvas to a dedicated Family Tree page
-- [ ] Verify home-to-lineage navigation and responsive layout
+- [x] Verify home-to-lineage navigation and responsive layout

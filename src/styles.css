@@ -19,8 +19,8 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", Georgia, serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -72,11 +72,20 @@
   --color-tree-fruit: var(--tree-fruit);
   --color-tree-line: var(--tree-line);
   --color-tree-ground: var(--tree-ground);
+  --color-relationship-canvas: var(--relationship-canvas);
+  --color-relationship-label: var(--relationship-label);
+  --color-relationship-ink: var(--relationship-ink);
+  --color-relationship-line: var(--relationship-line);
+  --color-family: var(--family);
+  --color-family-friend: var(--family-friend);
+  --color-community: var(--community);
 
   --shadow-paper: 0 1px 2px oklch(0.15 0.03 265 / 0.08), 0 12px 32px -18px oklch(0.15 0.03 265 / 0.35);
   --shadow-lift: 0 2px 4px oklch(0.15 0.03 265 / 0.1), 0 24px 48px -24px oklch(0.15 0.03 265 / 0.45);
   --shadow-gold: 0 10px 30px -12px oklch(0.667 0.157 58.3 / 0.5);
   --shadow-tree-fruit: 0 10px 30px -12px oklch(0.12 0.04 142 / 0.75), 0 0 0 6px oklch(0.49 0.1 142 / 0.1);
+  --shadow-portrait: 0 8px 24px -12px oklch(0.24 0.03 120 / 0.38), 0 0 0 1px oklch(0.98 0.01 95 / 0.75);
+  --shadow-portrait-hover: 0 16px 34px -14px oklch(0.24 0.05 145 / 0.48), 0 0 0 1px oklch(0.98 0.01 95 / 0.92);
 }
 
 :root {
@@ -145,6 +154,15 @@
   --tree-fruit: oklch(0.96 0.012 78);
   --tree-line: oklch(0.55 0.08 93);
   --tree-ground: oklch(0.25 0.055 75);
+
+  /* signed-in relationship tree — gallery light */
+  --relationship-canvas: oklch(0.955 0.012 92);
+  --relationship-label: oklch(0.985 0.006 92);
+  --relationship-ink: oklch(0.28 0.018 120);
+  --relationship-line: oklch(0.78 0.025 105);
+  --family: oklch(0.52 0.105 151);
+  --family-friend: oklch(0.63 0.145 52);
+  --community: oklch(0.59 0.03 240);
 }
 
 @layer base {
@@ -199,6 +217,15 @@
   50% { stroke-opacity: 1; }
 }
 
+@keyframes branch-draw {
+  from { stroke-dasharray: 1 900; stroke-dashoffset: 900; }
+  to { stroke-dasharray: 900 1; stroke-dashoffset: 0; }
+}
+
+@utility animate-branch-draw {
+  animation: branch-draw 1.1s ease-out both;
+}
+
 @utility tree-branch-active {
   animation: branch-glow 1.8s ease-in-out infinite;
   filter: drop-shadow(0 0 5px color-mix(in oklab, var(--color-primary) 55%, transparent));
@@ -206,4 +233,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .tree-branch-active { animation: none; }
+  .animate-branch-draw { animation: none; }
 }

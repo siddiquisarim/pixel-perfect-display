@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Maximize2, Minus, Plus, ShieldCheck, UsersRound } from "lucide-react";
+import { Maximize2, Minus, Plus, ShieldCheck } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -155,17 +155,29 @@ export function RelationshipTreeHome({ persons, relationships }: { persons: Fami
           <svg className="absolute inset-0 size-full" viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`} aria-hidden="true">
             <defs>
               <linearGradient id="trunk-tone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" className="text-tree-bark-deep" stopColor="currentColor" /><stop offset="0.5" className="text-tree-bark" stopColor="currentColor" /><stop offset="1" className="text-tree-bark-deep" stopColor="currentColor" /></linearGradient>
+              <linearGradient id="canopy-tone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" className="text-tree-leaf-light" stopColor="currentColor" stopOpacity=".34" /><stop offset="1" className="text-tree-leaf" stopColor="currentColor" stopOpacity=".2" /></linearGradient>
               <filter id="tree-soft"><feTurbulence baseFrequency="0.018" numOctaves="2" seed="5" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="8" /></filter>
+              <filter id="canopy-soft"><feTurbulence baseFrequency="0.025" numOctaves="3" seed="11" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="14" /></filter>
+              <pattern id="bark-lines" width="18" height="42" patternUnits="userSpaceOnUse"><path d="M3 0 C11 12 4 27 14 42 M16 0 C8 13 15 28 5 42" className="fill-none stroke-tree-line/20" strokeWidth="1" /></pattern>
             </defs>
-            <g className="fill-tree-leaf/10 stroke-tree-leaf/15" strokeWidth="1">
-              <ellipse cx="560" cy="300" rx="360" ry="220" />
-              <ellipse cx="350" cy="310" rx="190" ry="155" />
-              <ellipse cx="770" cy="310" rx="190" ry="155" />
+            <g fill="url(#canopy-tone)" className="stroke-tree-leaf/20" strokeWidth="1.5" filter="url(#canopy-soft)">
+              <ellipse cx="310" cy="310" rx="170" ry="142" />
+              <ellipse cx="444" cy="225" rx="190" ry="150" />
+              <ellipse cx="615" cy="210" rx="196" ry="155" />
+              <ellipse cx="790" cy="310" rx="175" ry="145" />
+              <ellipse cx="560" cy="355" rx="310" ry="176" />
+            </g>
+            <g className="fill-tree-leaf/20">
+              {[190,235,280,325,370,415,460,505,550,595,640,685,730,775,820,865,910].map((x, index) => <circle key={x} cx={x} cy={220 + (index % 4) * 54} r={22 + (index % 3) * 7} />)}
             </g>
             <path d="M 500 730 C 530 640, 520 555, 560 475 C 595 402, 575 330, 560 245 C 588 330, 630 380, 700 314 M 555 445 C 493 392, 420 350, 300 247 M 570 390 C 625 330, 722 285, 820 246 M 543 410 C 500 324, 500 250, 560 174 M 535 510 C 450 476, 350 458, 250 440 M 585 510 C 670 476, 770 458, 870 440" fill="none" stroke="url(#trunk-tone)" strokeLinecap="round" strokeWidth="34" filter="url(#tree-soft)" />
+            <path d="M 497 733 C 540 651, 530 558, 559 477 C 576 430, 574 357, 558 280" fill="none" stroke="url(#bark-lines)" strokeLinecap="round" strokeWidth="25" opacity=".72" />
             <path d="M 500 730 C 530 640, 520 555, 560 475 C 595 402, 575 330, 560 245 C 588 330, 630 380, 700 314 M 555 445 C 493 392, 420 350, 300 247 M 570 390 C 625 330, 722 285, 820 246 M 543 410 C 500 324, 500 250, 560 174 M 535 510 C 450 476, 350 458, 250 440 M 585 510 C 670 476, 770 458, 870 440" fill="none" className="stroke-relationship-line/35" strokeLinecap="round" strokeWidth="2" />
             {nodes.filter((node) => node.person.id !== ROOT_ID).map((node) => <path key={node.person.id} d={branchPath(node)} fill="none" className="stroke-family/55 animate-branch-draw" strokeLinecap="round" strokeWidth="2.5" />)}
-            <path d="M 475 730 Q 560 700 645 730" fill="none" className="stroke-tree-ground/35" strokeLinecap="round" strokeWidth="3" />
+            <g className="fill-none stroke-tree-ground/45" strokeLinecap="round">
+              <path d="M 505 700 C 430 715 360 728 270 733 M 520 710 C 455 736 400 744 330 748 M 600 703 C 668 720 730 731 842 736 M 580 715 C 640 739 700 746 768 751" strokeWidth="8" />
+              <path d="M 470 731 C 520 711 598 711 652 732" strokeWidth="3" />
+            </g>
           </svg>
           {nodes.map((node) => <PortraitNode key={node.person.id} node={node} root={node.person.id === ROOT_ID} />)}
           <div className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.18em] text-community">Select any portrait to open the full lineage</div>

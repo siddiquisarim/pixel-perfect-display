@@ -50,6 +50,8 @@ export const Route = createFileRoute("/tree")({
         property: "og:description",
         content: "An interactive tree of biological relatives and spouses, with consent-aware protections.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: FamilyTreePage,
