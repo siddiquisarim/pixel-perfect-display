@@ -180,25 +180,23 @@ function FamilyTreePage() {
                 )}
 
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                    Life events
-                  </h3>
+                  <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Life events</h3>
                   <ul className="mt-3 space-y-2">
-                    {selectedEvents.length === 0 && (
-                      <li className="text-sm text-muted-foreground">No events recorded yet.</li>
-                    )}
-                    {selectedEvents
-                      .sort((a, b) => a.year - b.year)
-                      .map((e) => (
-                        <li key={e.id} className="flex gap-3 text-sm">
-                          <span className="font-display text-primary-deep">{e.year}</span>
-                          <span>{e.title}</span>
-                        </li>
-                      ))}
+                    {selectedEvents.length === 0 && <li className="text-sm text-muted-foreground">No events recorded yet.</li>}
+                    {selectedEvents.sort((a, b) => a.year - b.year).map((event) => (
+                      <li key={event.id}>
+                        <button type="button" onClick={() => openEvent(event.id)} className="flex w-full gap-3 rounded-md border border-border bg-card p-2 text-left text-sm hover:border-primary">
+                          <span className="font-display text-primary-deep">{event.year}</span>
+                          <span className="flex-1">{event.title}</span>
+                          <span className="text-xs text-muted-foreground">Edit story + media</span>
+                        </button>
+                      </li>
+                    ))}
                   </ul>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
+                  {selected.id !== rootId && <Button variant="outline" onClick={() => { setRootId(selected.id); setFocusedId(null); setProfileId(null); }}><GitFork className="size-4" /> View family map</Button>}
                   <AddLifeEventDialog
                     personName={`${selected.first_name} ${selected.last_name}`}
                     onSubmit={(input) => {
