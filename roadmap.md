@@ -13,3 +13,8 @@
 - [x] Show only accepted direct connections with category colors and circular portraits
 - [x] Move the detailed lineage canvas to a dedicated Family Tree page
 - [x] Verify home-to-lineage navigation and responsive layout
+- [ ] Add a public landing page and demo sign-in gate before the signed-in home
+- [ ] Turn relationship and lineage nodes into realistic fruit with portrait reveal on hover
+- [ ] Add editable notes, photos, and videos to each life event
+- [ ] Let relatives become the root of their own full lineage view
+- [ ] Verify landing, authentication, fruit navigation, event media, lineage switching, and mobile layouts
