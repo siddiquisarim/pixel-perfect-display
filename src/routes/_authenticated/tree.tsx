@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { AppShell } from "@/components/app-shell";
 import { FamilyTreeCanvas } from "@/components/family-tree-canvas";
+import { LifeEventDialog } from "@/components/life-event-dialog";
 import { initialsOf } from "@/components/person-node";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

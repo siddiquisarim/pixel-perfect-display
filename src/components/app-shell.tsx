@@ -105,9 +105,16 @@ export function AppShell({
                 <p className="text-[11px] text-foreground/50">{user.birth_place}</p>
               </div>
             </div>
-            <Link to="/auth" className="text-xs font-medium text-foreground/60 hover:text-primary">
+            <button
+              type="button"
+              className="text-xs font-medium text-foreground/60 hover:text-primary"
+              onClick={() => {
+                setDemoAuthenticated(false);
+                navigate({ to: "/", replace: true });
+              }}
+            >
               Sign out
-            </Link>
+            </button>
           </div>
         </div>
 
