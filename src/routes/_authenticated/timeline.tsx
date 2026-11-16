@@ -98,7 +98,7 @@ function TimelinePage() {
         <ol className="space-y-8">
           {rows.map((e, i) => {
             const media = eventMedia(e);
-            const showDecade = i === 0 || Math.floor(rows[i - 1].year / 10) !== Math.floor(e.year / 10);
+            const showDecade = i === 0 || Math.floor((rows[i - 1]?.year ?? 0) / 10) !== Math.floor(e.year / 10);
             const left = i % 2 === 0;
             return (
               <li key={e.id} className="relative">

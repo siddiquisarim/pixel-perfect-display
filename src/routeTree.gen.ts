@@ -19,6 +19,7 @@ import { Route as AuthenticatedMediaRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTimelineRouteImport } from './routes/_authenticated/timeline'
 import { Route as AuthenticatedTreeRouteImport } from './routes/_authenticated/tree'
+import { Route as AuthenticatedLifeEventsEventIdRouteImport } from './routes/_authenticated/life-events.$eventId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -69,6 +70,12 @@ const AuthenticatedTreeRoute = AuthenticatedTreeRouteImport.update({
   path: '/tree',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedLifeEventsEventIdRoute =
+  AuthenticatedLifeEventsEventIdRouteImport.update({
+    id: '/life-events/$eventId',
+    path: '/life-events/$eventId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/timeline': typeof AuthenticatedTimelineRoute
   '/tree': typeof AuthenticatedTreeRoute
+  '/life-events/$eventId': typeof AuthenticatedLifeEventsEventIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -91,6 +99,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/timeline': typeof AuthenticatedTimelineRoute
   '/tree': typeof AuthenticatedTreeRoute
+  '/life-events/$eventId': typeof AuthenticatedLifeEventsEventIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,6 +113,7 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/timeline': typeof AuthenticatedTimelineRoute
   '/_authenticated/tree': typeof AuthenticatedTreeRoute
+  '/_authenticated/life-events/$eventId': typeof AuthenticatedLifeEventsEventIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/timeline'
     | '/tree'
+    | '/life-events/$eventId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/timeline'
     | '/tree'
+    | '/life-events/$eventId'
   id:
     | '__root__'
     | '/'
@@ -140,6 +152,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/timeline'
     | '/_authenticated/tree'
+    | '/_authenticated/life-events/$eventId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -220,6 +233,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTreeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/life-events/$eventId': {
+      id: '/_authenticated/life-events/$eventId'
+      path: '/life-events/$eventId'
+      fullPath: '/life-events/$eventId'
+      preLoaderRoute: typeof AuthenticatedLifeEventsEventIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -231,6 +251,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTimelineRoute: typeof AuthenticatedTimelineRoute
   AuthenticatedTreeRoute: typeof AuthenticatedTreeRoute
+  AuthenticatedLifeEventsEventIdRoute: typeof AuthenticatedLifeEventsEventIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -241,6 +262,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTimelineRoute: AuthenticatedTimelineRoute,
   AuthenticatedTreeRoute: AuthenticatedTreeRoute,
+  AuthenticatedLifeEventsEventIdRoute: AuthenticatedLifeEventsEventIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
