@@ -110,7 +110,7 @@ function TimelinePage() {
                 <span className="absolute left-4 top-8 z-10 size-3 -translate-x-1/2 rounded-full bg-primary ring-4 ring-background md:left-1/2" aria-hidden />
                 <div className={`pl-10 md:w-1/2 md:pl-0 ${left ? "md:pr-10" : "md:ml-auto md:pl-10"}`}>
                   <Link to="/life-events/$eventId" params={{ eventId: e.id }} className="paper-panel block overflow-hidden transition hover:-translate-y-0.5 hover:shadow-paper">
-                    {media.length > 0 && (
+                    {media[0] && (
                       <div className={`grid gap-1 ${media.length > 1 ? "grid-cols-[2fr_1fr]" : ""}`}>
                         <MediaThumb item={media[0]} className="aspect-video rounded-none" />
                         {media.length > 1 && (
