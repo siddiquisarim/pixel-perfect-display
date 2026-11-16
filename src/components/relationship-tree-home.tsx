@@ -192,7 +192,7 @@ export function RelationshipTreeHome({ persons, relationships }: { persons: Fami
         <div className="flex flex-wrap items-center gap-4 text-[10px] font-semibold uppercase tracking-[0.12em] text-relationship-ink">
           {(Object.keys(KIND_LABELS) as ConnectionKind[]).map((kind) => <span key={kind} className="flex items-center gap-2"><span className={cn("size-2.5 rounded-full", kind === "family" ? "bg-family" : kind === "friend" ? "bg-family-friend" : "bg-community")} />{KIND_LABELS[kind]}</span>)}
         </div>
-        <div className="flex items-center gap-2 text-xs text-community"><ShieldCheck className="size-4 text-family" /> Only accepted connections appear here</div>
+        <div className="flex items-center gap-2 text-xs text-community"><ShieldCheck className="size-4 text-family" /> New fruit shows “Invite pending” until accepted</div>
       </footer>
     </section>
   );
