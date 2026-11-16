@@ -17,7 +17,7 @@ const CANVAS_HEIGHT = 760;
 const ROOT_POINT = { x: 560, y: 472 };
 
 type ConnectionKind = "family" | "friend" | "community";
-type NetworkNode = { person: FamilyPerson; x: number; y: number; kind: ConnectionKind; label: string };
+type NetworkNode = { person: FamilyPerson; x: number; y: number; kind: ConnectionKind; label: string; pending?: boolean };
 
 const KIND_LABELS: Record<ConnectionKind, string> = {
   family: "Family",
@@ -44,7 +44,6 @@ function createRadialNodes(persons: FamilyPerson[], relationships: Relationship[
 
   const connectedIds = new Set<string>([ROOT_ID]);
   for (const relationship of relationships) {
-    if (relationship.verification_status === "dismissed") continue;
     if (relationship.person_a_id === ROOT_ID) connectedIds.add(relationship.person_b_id);
     if (relationship.person_b_id === ROOT_ID) connectedIds.add(relationship.person_a_id);
   }
@@ -70,6 +69,7 @@ function createRadialNodes(persons: FamilyPerson[], relationships: Relationship[
       }),
       kind: "family" as const,
       label: connectionLabel(person.id, relationships),
+      pending: !relationships.some((r) => r.verification_status === "connected" && ((r.person_a_id === ROOT_ID && r.person_b_id === person.id) || (r.person_b_id === ROOT_ID && r.person_a_id === person.id))),
     })),
   ];
 }
@@ -97,7 +97,7 @@ function PortraitNode({ node, root }: { node: NetworkNode; root: boolean }) {
       </span>
       <span className={cn("mt-3 inline-flex max-w-44 flex-col border bg-relationship-label px-3 py-1.5 shadow-paper transition-colors", root ? "border-primary" : "border-relationship-line group-hover:border-primary")}>
         <span className="font-display text-base leading-none text-relationship-ink">{node.person.first_name} {node.person.last_name}</span>
-        <span className={cn("mt-1 text-[9px] font-semibold uppercase tracking-[0.14em]", node.kind === "family" ? "text-family" : node.kind === "friend" ? "text-family-friend" : "text-community")}>{root ? "You · View full lineage" : `${node.label} · Accepted`}</span>
+        <span className={cn("mt-1 text-[9px] font-semibold uppercase tracking-[0.14em]", node.kind === "family" ? "text-family" : node.kind === "friend" ? "text-family-friend" : "text-community")}>{root ? "You · View full lineage" : `${node.label} · ${node.pending ? "Invite pending" : "Accepted"}`}</span>
       </span>
     </Link>
   );
