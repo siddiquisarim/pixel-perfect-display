@@ -86,23 +86,10 @@ function PortraitNode({ node, root }: { node: NetworkNode; root: boolean }) {
       style={{ left: node.x, top: node.y }}
     >
       <span
-        className={cn(
-          "relative mx-auto flex items-center justify-center rounded-full border-[5px] border-relationship-canvas bg-relationship-canvas p-1 shadow-portrait transition duration-300 group-hover:-translate-y-1 group-hover:shadow-portrait-hover group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-4 group-focus-visible:ring-offset-relationship-canvas motion-reduce:transition-none",
-          root ? "ring-2 ring-primary" : node.kind === "family" ? "ring-2 ring-family" : node.kind === "friend" ? "ring-2 ring-family-friend" : "ring-2 ring-community",
-        )}
+        className="relative mx-auto block transition duration-300 group-hover:-translate-y-1 group-focus-visible:rounded-full group-focus-visible:ring-2 group-focus-visible:ring-ring group-focus-visible:ring-offset-4 group-focus-visible:ring-offset-relationship-canvas motion-reduce:transition-none"
         style={{ width: size, height: size }}
       >
-        {node.person.avatar_url ? (
-          <img
-            src={node.person.avatar_url}
-            alt=""
-            className="size-full rounded-full object-cover grayscale-[12%] transition duration-500 group-hover:grayscale-0 motion-reduce:transition-none"
-          />
-        ) : (
-          <span className="flex size-full items-center justify-center rounded-full bg-secondary font-display text-2xl text-secondary-foreground">
-            {node.person.first_name.charAt(0)}{node.person.last_name.charAt(0)}
-          </span>
-        )}
+        <FruitPortrait person={node.person} className="size-full" />
         <span className={cn("absolute bottom-1 right-1 size-4 rounded-full border-[3px] border-relationship-canvas", node.kind === "family" ? "bg-family" : node.kind === "friend" ? "bg-family-friend" : "bg-community")} />
       </span>
       <span className={cn("mt-3 inline-flex max-w-44 flex-col border bg-relationship-label px-3 py-1.5 shadow-paper transition-colors", root ? "border-primary" : "border-relationship-line group-hover:border-primary")}>

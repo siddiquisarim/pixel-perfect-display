@@ -19,7 +19,7 @@ import { useFamily } from "@/lib/family-store";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { to: "/", label: "Home", icon: Home },
+  { to: "/home", label: "Home", icon: Home },
   { to: "/tree", label: "Family Tree", icon: GitFork },
   { to: "/discovery", label: "Discovery & Matches", icon: Sparkles },
   { to: "/timeline", label: "Timeline", icon: ScrollText },
