@@ -1,4 +1,4 @@
-import { UserPlus } from "lucide-react";
+import { Plus, UserPlus } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
