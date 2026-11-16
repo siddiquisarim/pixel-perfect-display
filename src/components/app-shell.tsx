@@ -123,7 +123,7 @@ export function AppShell({
             <Link
               key={to}
               to={to}
-              activeOptions={{ exact: to === "/" }}
+              activeOptions={{ exact: to === "/home" }}
               className="flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground/60 transition-colors hover:text-foreground data-[status=active]:bg-white/8 data-[status=active]:text-primary"
             >
               <Icon className="size-4" />
