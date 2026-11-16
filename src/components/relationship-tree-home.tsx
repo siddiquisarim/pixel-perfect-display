@@ -168,7 +168,7 @@ export function RelationshipTreeHome({ persons, relationships }: { persons: Fami
             </g>
           </svg>
           {nodes.map((node) => <PortraitNode key={node.person.id} node={node} root={node.person.id === ROOT_ID} />)}
-          <div className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.18em] text-community">Select any portrait to open the full lineage</div>
+          <div className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.18em] text-community">Select any fruit to open the full lineage</div>
         </div>
       </div>
 
