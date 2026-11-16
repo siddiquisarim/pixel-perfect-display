@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { useFamily } from "@/lib/family-store";
 import type { GeoPrecision } from "@/lib/family-types";
 
-export const Route = createFileRoute("/settings")({
+export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
       { title: "Settings & Privacy — FamilyLink" },
@@ -23,6 +23,8 @@ export const Route = createFileRoute("/settings")({
         property: "og:description",
         content: "Granular consent and visibility controls for your family records.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: SettingsPage,

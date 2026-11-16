@@ -26,6 +26,7 @@ import {
   type RelationshipType,
   type RsvpStatus,
   type TimelineEvent,
+  type TimelineEventMedia,
   type TimelineEventType,
   type User,
 } from "./family-types";
@@ -359,6 +360,10 @@ interface FamilyStore {
     title: string;
     description: string;
   }) => void;
+  updateTimelineEvent: (
+    id: string,
+    input: { title: string; description: string; attachments: TimelineEventMedia[] },
+  ) => void;
   addEvent: (
     input: Omit<FamilyEvent, "id" | "created_by_user_id">,
     invitees: { name: string; email: string }[],
@@ -463,6 +468,22 @@ export function FamilyProvider({ children }: { children: ReactNode }) {
     ]);
   }, []);
 
+  const updateTimelineEvent = useCallback<FamilyStore["updateTimelineEvent"]>((id, input) => {
+    setTimeline((prev) =>
+      prev.map((event) =>
+        event.id === id
+          ? {
+              ...event,
+              title: input.title,
+              description: input.description,
+              attachments: input.attachments,
+              media_url: input.attachments.find((attachment) => attachment.kind === "image")?.url ?? null,
+            }
+          : event,
+      ),
+    );
+  }, []);
+
   const addEvent = useCallback<FamilyStore["addEvent"]>((input, invitees) => {
     const id = uid("e");
     setEvents((prev) => [{ id, created_by_user_id: "u_1", ...input }, ...prev]);
@@ -521,6 +542,7 @@ export function FamilyProvider({ children }: { children: ReactNode }) {
       addPerson,
       setMatchStatus,
       addTimelineEvent,
+      updateTimelineEvent,
       addEvent,
       setRsvpStatus,
       addMedia,
@@ -543,6 +565,7 @@ export function FamilyProvider({ children }: { children: ReactNode }) {
       addPerson,
       setMatchStatus,
       addTimelineEvent,
+      updateTimelineEvent,
       addEvent,
       setRsvpStatus,
       addMedia,

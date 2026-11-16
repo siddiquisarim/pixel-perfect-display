@@ -26,7 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useFamily } from "@/lib/family-store";
 import type { MatchSuggestion } from "@/lib/family-types";
 
-export const Route = createFileRoute("/discovery")({
+export const Route = createFileRoute("/_authenticated/discovery")({
   head: () => ({
     meta: [
       { title: "Discovery & Matches — FamilyLink" },
@@ -40,6 +40,8 @@ export const Route = createFileRoute("/discovery")({
         property: "og:description",
         content: "Possible family links with confidence scores, reasoning and a visual lineage path.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: DiscoveryPage,

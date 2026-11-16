@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarPlus, Link2, Plus, UserPlus } from "lucide-react";
+import { CalendarPlus, GitFork, Link2, Plus, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/app-shell";
 import { FamilyTreeCanvas } from "@/components/family-tree-canvas";
+import { LifeEventDialog } from "@/components/life-event-dialog";
 import { initialsOf } from "@/components/person-node";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,7 @@ import type {
   TimelineEventType,
 } from "@/lib/family-types";
 
-export const Route = createFileRoute("/tree")({
+export const Route = createFileRoute("/_authenticated/tree")({
   head: () => ({
     meta: [
       { title: "Family Tree — FamilyLink" },
@@ -66,18 +67,27 @@ const RELATION_LABELS: Record<RelationshipType, string> = {
 };
 
 function FamilyTreePage() {
-  const { persons, relationships, addPerson, addTimelineEvent, timeline, privacy } = useFamily();
+  const { persons, relationships, addPerson, addTimelineEvent, updateTimelineEvent, timeline, privacy, personName } = useFamily();
   const [addOpen, setAddOpen] = useState(false);
+  const [rootId, setRootId] = useState("p_marcus");
   const [focusedId, setFocusedId] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
+  const [eventId, setEventId] = useState<string | null>(null);
 
   const selected = persons.find((p) => p.id === profileId) ?? null;
   const selectedEvents = timeline.filter((t) => t.person_id === profileId);
+  const selectedEvent = timeline.find((event) => event.id === eventId) ?? null;
+  const rootPerson = persons.find((person) => person.id === rootId);
+
+  const openEvent = (id: string) => {
+    setProfileId(null);
+    setEventId(id);
+  };
 
   return (
     <AppShell
-      title="Family Tree"
-      subtitle="A living map of your bloodline. Follow the branches through marriages, births, migrations and new generations."
+      title={rootId === "p_marcus" ? "Family Tree" : `${rootPerson?.first_name ?? "Relative"}’s Family Tree`}
+      subtitle="A living map of connected bloodlines. Select fruit for life stories, add members, or explore the tree from another relative’s perspective."
       action={
         <AddRelativeDialog
           open={addOpen}
@@ -85,13 +95,33 @@ function FamilyTreePage() {
           persons={persons}
           onSubmit={(input) => {
             addPerson(input);
-            toast.success(`${input.first_name} ${input.last_name} added to your tree`);
+            toast.success(`${input.first_name} ${input.last_name} added as a new fruit on the tree`);
             setAddOpen(false);
           }}
         />
       }
     >
-      <FamilyTreeCanvas persons={persons} relationships={relationships} timeline={timeline} selectedId={focusedId} onSelect={setFocusedId} onClearSelection={() => setFocusedId(null)} onOpenProfile={setProfileId} />
+      <FamilyTreeCanvas
+        persons={persons}
+        relationships={relationships}
+        timeline={timeline}
+        rootId={rootId}
+        selectedId={focusedId}
+        onSelect={setFocusedId}
+        onClearSelection={() => setFocusedId(null)}
+        onOpenProfile={setProfileId}
+        onOpenEvent={openEvent}
+        onRootChange={setRootId}
+      />
+
+      <LifeEventDialog
+        event={selectedEvent}
+        personName={selectedEvent ? personName(selectedEvent.person_id) : ""}
+        onOpenChange={(open) => !open && setEventId(null)}
+        onSave={(input) => {
+          if (selectedEvent) updateTimelineEvent(selectedEvent.id, input);
+        }}
+      />
 
       <Sheet open={Boolean(selected)} onOpenChange={(o) => !o && setProfileId(null)}>
         <SheetContent className="w-full overflow-y-auto bg-paper text-paper-foreground sm:max-w-md">
@@ -150,25 +180,23 @@ function FamilyTreePage() {
                 )}
 
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                    Life events
-                  </h3>
+                  <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Life events</h3>
                   <ul className="mt-3 space-y-2">
-                    {selectedEvents.length === 0 && (
-                      <li className="text-sm text-muted-foreground">No events recorded yet.</li>
-                    )}
-                    {selectedEvents
-                      .sort((a, b) => a.year - b.year)
-                      .map((e) => (
-                        <li key={e.id} className="flex gap-3 text-sm">
-                          <span className="font-display text-primary-deep">{e.year}</span>
-                          <span>{e.title}</span>
-                        </li>
-                      ))}
+                    {selectedEvents.length === 0 && <li className="text-sm text-muted-foreground">No events recorded yet.</li>}
+                    {selectedEvents.sort((a, b) => a.year - b.year).map((event) => (
+                      <li key={event.id}>
+                        <button type="button" onClick={() => openEvent(event.id)} className="flex w-full gap-3 rounded-md border border-border bg-card p-2 text-left text-sm hover:border-primary">
+                          <span className="font-display text-primary-deep">{event.year}</span>
+                          <span className="flex-1">{event.title}</span>
+                          <span className="text-xs text-muted-foreground">Edit story + media</span>
+                        </button>
+                      </li>
+                    ))}
                   </ul>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
+                  {selected.id !== rootId && <Button variant="outline" onClick={() => { setRootId(selected.id); setFocusedId(null); setProfileId(null); }}><GitFork className="size-4" /> View family map</Button>}
                   <AddLifeEventDialog
                     personName={`${selected.first_name} ${selected.last_name}`}
                     onSubmit={(input) => {
@@ -237,7 +265,7 @@ function AddRelativeDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button className="bg-primary text-primary-foreground hover:bg-primary-deep">
-          <UserPlus className="size-4" /> Quick add relative
+          <UserPlus className="size-4" /> Add member
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto bg-paper text-paper-foreground sm:max-w-lg">

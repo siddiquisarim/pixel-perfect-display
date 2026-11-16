@@ -26,7 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useFamily } from "@/lib/family-store";
 import type { TimelineEventType } from "@/lib/family-types";
 
-export const Route = createFileRoute("/timeline")({
+export const Route = createFileRoute("/_authenticated/timeline")({
   head: () => ({
     meta: [
       { title: "Family Timeline — FamilyLink" },
@@ -40,6 +40,8 @@ export const Route = createFileRoute("/timeline")({
         property: "og:description",
         content: "Births, marriages, migrations and milestones, filterable by family member.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: TimelinePage,

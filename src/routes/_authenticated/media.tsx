@@ -11,7 +11,7 @@ import { useFamily } from "@/lib/family-store";
 import { MEDIA_LIMITS, type MediaItem } from "@/lib/family-types";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/media")({
+export const Route = createFileRoute("/_authenticated/media")({
   head: () => ({
     meta: [
       { title: "Media Vault — FamilyLink" },
@@ -25,6 +25,8 @@ export const Route = createFileRoute("/media")({
         property: "og:description",
         content: "Family photos and archival video in one vault, with free-tier quota monitoring.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: MediaPage,

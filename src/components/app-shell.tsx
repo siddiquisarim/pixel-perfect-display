@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 import userAvatar from "@/assets/portrait-marcus.jpg";
 import {
@@ -14,11 +14,12 @@ import type { ReactNode } from "react";
 
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
+import { setDemoAuthenticated } from "@/lib/demo-auth";
 import { useFamily } from "@/lib/family-store";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { to: "/", label: "Home", icon: Home },
+  { to: "/home", label: "Home", icon: Home },
   { to: "/tree", label: "Family Tree", icon: GitFork },
   { to: "/discovery", label: "Discovery & Matches", icon: Sparkles },
   { to: "/timeline", label: "Timeline", icon: ScrollText },
@@ -51,13 +52,14 @@ export function AppShell({
   children: ReactNode;
 }) {
   const { user, setDiscoveryConsent, media, storageUsedMb } = useFamily();
+  const navigate = useNavigate();
   const storagePct = Math.min(100, Math.round((storageUsedMb / 100) * 100));
 
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-white/10 bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-5 py-3">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/home" className="flex items-center gap-3">
             <KnotLogo />
             <span className="font-display text-xl tracking-tight">FamilyLink</span>
           </Link>
@@ -103,9 +105,16 @@ export function AppShell({
                 <p className="text-[11px] text-foreground/50">{user.birth_place}</p>
               </div>
             </div>
-            <Link to="/auth" className="text-xs font-medium text-foreground/60 hover:text-primary">
+            <button
+              type="button"
+              className="text-xs font-medium text-foreground/60 hover:text-primary"
+              onClick={() => {
+                setDemoAuthenticated(false);
+                navigate({ to: "/", replace: true });
+              }}
+            >
               Sign out
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -114,7 +123,7 @@ export function AppShell({
             <Link
               key={to}
               to={to}
-              activeOptions={{ exact: to === "/" }}
+              activeOptions={{ exact: to === "/home" }}
               className="flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground/60 transition-colors hover:text-foreground data-[status=active]:bg-white/8 data-[status=active]:text-primary"
             >
               <Icon className="size-4" />

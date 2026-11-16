@@ -29,7 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useFamily } from "@/lib/family-store";
 import type { FamilyEvent, FamilyEventType, RsvpStatus } from "@/lib/family-types";
 
-export const Route = createFileRoute("/events")({
+export const Route = createFileRoute("/_authenticated/events")({
   head: () => ({
     meta: [
       { title: "Events & RSVP — FamilyLink" },
@@ -43,6 +43,8 @@ export const Route = createFileRoute("/events")({
         property: "og:description",
         content: "Create family gatherings, invite guests and track yes, no and maybe responses.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: EventsPage,
