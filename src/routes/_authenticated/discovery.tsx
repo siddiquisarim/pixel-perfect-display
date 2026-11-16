@@ -40,6 +40,8 @@ export const Route = createFileRoute("/_authenticated/discovery")({
         property: "og:description",
         content: "Possible family links with confidence scores, reasoning and a visual lineage path.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: DiscoveryPage,

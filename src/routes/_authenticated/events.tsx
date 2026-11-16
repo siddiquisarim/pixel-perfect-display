@@ -43,6 +43,8 @@ export const Route = createFileRoute("/_authenticated/events")({
         property: "og:description",
         content: "Create family gatherings, invite guests and track yes, no and maybe responses.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: EventsPage,

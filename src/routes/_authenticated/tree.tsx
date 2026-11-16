@@ -265,7 +265,7 @@ function AddRelativeDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button className="bg-primary text-primary-foreground hover:bg-primary-deep">
-          <UserPlus className="size-4" /> Quick add relative
+          <UserPlus className="size-4" /> Add member
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto bg-paper text-paper-foreground sm:max-w-lg">

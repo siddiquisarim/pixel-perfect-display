@@ -40,6 +40,8 @@ export const Route = createFileRoute("/_authenticated/timeline")({
         property: "og:description",
         content: "Births, marriages, migrations and milestones, filterable by family member.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: TimelinePage,

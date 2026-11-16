@@ -23,6 +23,8 @@ export const Route = createFileRoute("/_authenticated/settings")({
         property: "og:description",
         content: "Granular consent and visibility controls for your family records.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: SettingsPage,
