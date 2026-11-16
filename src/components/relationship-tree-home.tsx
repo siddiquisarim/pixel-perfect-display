@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Maximize2, Minus, Plus, ShieldCheck } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { FruitPortrait } from "@/components/fruit-portrait";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { FamilyPerson, Relationship } from "@/lib/family-types";

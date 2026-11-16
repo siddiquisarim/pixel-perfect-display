@@ -14,6 +14,7 @@ import type { ReactNode } from "react";
 
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
+import { setDemoAuthenticated } from "@/lib/demo-auth";
 import { useFamily } from "@/lib/family-store";
 import { cn } from "@/lib/utils";
 

@@ -360,6 +360,10 @@ interface FamilyStore {
     title: string;
     description: string;
   }) => void;
+  updateTimelineEvent: (
+    id: string,
+    input: { title: string; description: string; attachments: TimelineEventMedia[] },
+  ) => void;
   addEvent: (
     input: Omit<FamilyEvent, "id" | "created_by_user_id">,
     invitees: { name: string; email: string }[],
