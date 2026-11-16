@@ -52,6 +52,7 @@ export function AppShell({
   children: ReactNode;
 }) {
   const { user, setDiscoveryConsent, media, storageUsedMb } = useFamily();
+  const navigate = useNavigate();
   const storagePct = Math.min(100, Math.round((storageUsedMb / 100) * 100));
 
   return (
