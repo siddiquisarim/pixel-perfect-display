@@ -18,3 +18,4 @@
 - [x] Add editable notes, photos, and videos to each life event
 - [x] Let relatives become the root of their own full lineage view
 - [x] Verify landing, authentication, fruit navigation, event media, lineage switching, and mobile layouts
+- [x] Create and visually verify a beginner-friendly product guide covering each feature, step-by-step use, and connections between tabs
