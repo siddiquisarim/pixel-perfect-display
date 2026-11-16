@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { CalendarPlus } from "lucide-react";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { CalendarPlus, Film, ImageIcon } from "lucide-react";
+
+import { MediaThumb, eventMedia } from "@/components/event-media";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -91,40 +93,56 @@ function TimelinePage() {
         <span className="text-xs text-foreground/40">{rows.length} events</span>
       </div>
 
-      <div className="relative pl-6">
-        <span className="absolute left-1.5 top-2 bottom-2 w-px bg-white/15" aria-hidden />
-        <ul className="space-y-5">
-          {rows.map((e) => (
-            <li key={e.id} className="relative">
-              <span className="absolute -left-[1.125rem] top-6 size-2.5 rounded-full bg-primary ring-4 ring-background" />
-              <article className="paper-panel flex flex-wrap gap-4 p-4">
-                {e.media_url && (
-                  <img
-                    src={e.media_url}
-                    alt=""
-                    loading="lazy"
-                    width={320}
-                    height={320}
-                    className="size-24 rounded-lg object-cover"
-                  />
+      <div className="relative">
+        <span className="absolute left-4 top-0 bottom-0 w-px bg-border-strong md:left-1/2" aria-hidden />
+        <ol className="space-y-8">
+          {rows.map((e, i) => {
+            const media = eventMedia(e);
+            const showDecade = i === 0 || Math.floor((rows[i - 1]?.year ?? 0) / 10) !== Math.floor(e.year / 10);
+            const left = i % 2 === 0;
+            return (
+              <li key={e.id} className="relative">
+                {showDecade && (
+                  <p className="relative z-10 mb-6 ml-10 w-fit rounded-full border border-border bg-background px-3 py-1 font-display text-lg md:mx-auto">
+                    {Math.floor(e.year / 10) * 10}s
+                  </p>
                 )}
-                <div className="min-w-56 flex-1">
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <span className="font-display text-2xl text-primary-deep">{e.year}</span>
-                    <Badge className={TYPE_TONE[e.event_type]}>
-                      {e.event_type.charAt(0).toUpperCase() + e.event_type.slice(1)}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">{personName(e.person_id)}</span>
-                  </div>
-                  <h3 className="mt-1.5 text-base font-semibold">{e.title}</h3>
-                  {e.description && (
-                    <p className="mt-1 text-sm text-muted-foreground">{e.description}</p>
-                  )}
+                <span className="absolute left-4 top-8 z-10 size-3 -translate-x-1/2 rounded-full bg-primary ring-4 ring-background md:left-1/2" aria-hidden />
+                <div className={`pl-10 md:w-1/2 md:pl-0 ${left ? "md:pr-10" : "md:ml-auto md:pl-10"}`}>
+                  <Link to="/life-events/$eventId" params={{ eventId: e.id }} className="paper-panel block overflow-hidden transition hover:-translate-y-0.5 hover:shadow-paper">
+                    {media[0] && (
+                      <div className={`grid gap-1 ${media.length > 1 ? "grid-cols-[2fr_1fr]" : ""}`}>
+                        <MediaThumb item={media[0]} className="aspect-video rounded-none" />
+                        {media.length > 1 && (
+                          <div className="grid gap-1">
+                            {media.slice(1, 3).map((m) => <MediaThumb key={m.id} item={m} className="h-full min-h-16 rounded-none" />)}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <span className="font-display text-3xl text-primary-deep">{e.year}</span>
+                        <Badge className={TYPE_TONE[e.event_type]}>{e.event_type.charAt(0).toUpperCase() + e.event_type.slice(1)}</Badge>
+                        <span className="text-xs text-muted-foreground">{personName(e.person_id)}</span>
+                      </div>
+                      <h3 className="mt-2 text-base font-semibold">{e.title}</h3>
+                      {e.description && <p className="mt-1 line-clamp-3 text-sm text-muted-foreground">{e.description}</p>}
+                      <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
+                        <span className="flex items-center gap-3">
+                          <span className="flex items-center gap-1"><ImageIcon className="size-3.5" />{media.filter((m) => m.kind === "image").length}</span>
+                          <span className="flex items-center gap-1"><Film className="size-3.5" />{media.filter((m) => m.kind === "video").length}</span>
+                        </span>
+                        <span className="font-medium text-primary-deep">Read the story →</span>
+                      </div>
+                    </div>
+                  </Link>
                 </div>
-              </article>
-            </li>
-          ))}
-        </ul>
+              </li>
+            );
+          })}
+        </ol>
+        {rows.length === 0 && <p className="text-sm text-muted-foreground">No events recorded for this relative yet.</p>}
       </div>
     </AppShell>
   );

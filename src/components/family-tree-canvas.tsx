@@ -34,7 +34,7 @@ const KNOWN_RELATIONS: Record<string, string> = {
   p_pearl: "Paternal grandmother",
   p_david: "Father",
   p_yvonne: "Mother",
-  p_amara: "Daughter",
+  p_amara: "Daughter", p_harold: "Maternal grandfather", p_ruby: "Maternal grandmother", p_clive: "Maternal uncle",
 };
 
 const EVENT_LABELS = {

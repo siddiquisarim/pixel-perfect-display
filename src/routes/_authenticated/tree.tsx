@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { CalendarPlus, GitFork, Link2, Plus, UserPlus } from "lucide-react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { getBirthFamily, isMarriedIn } from "@/lib/birth-family";
+import { CalendarPlus, GitFork, HeartHandshake, RotateCcw, Link2, Plus, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -73,6 +74,10 @@ function FamilyTreePage() {
   const [focusedId, setFocusedId] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [eventId, setEventId] = useState<string | null>(null);
+  const [birthFamilyOf, setBirthFamilyOf] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const birthFamily = birthFamilyOf ? getBirthFamily(birthFamilyOf, persons, relationships) : null;
+  const birthFamilyPerson = persons.find((p) => p.id === birthFamilyOf);
 
   const selected = persons.find((p) => p.id === profileId) ?? null;
   const selectedEvents = timeline.filter((t) => t.person_id === profileId);
@@ -81,7 +86,13 @@ function FamilyTreePage() {
 
   const openEvent = (id: string) => {
     setProfileId(null);
-    setEventId(id);
+    navigate({ to: "/life-events/$eventId", params: { eventId: id } });
+  };
+  const showBirthFamily = (id: string) => {
+    setBirthFamilyOf(id);
+    setRootId(id);
+    setFocusedId(null);
+    setProfileId(null);
   };
 
   return (
@@ -101,9 +112,22 @@ function FamilyTreePage() {
         />
       }
     >
+      {birthFamily && birthFamilyPerson && (
+        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-4 text-card-foreground">
+          <HeartHandshake className="size-5 text-primary" />
+          <p className="min-w-0 flex-1 text-sm">
+            <strong className="font-semibold">{birthFamilyPerson.first_name}’s birth family{birthFamilyPerson.maiden_name ? ` (${birthFamilyPerson.maiden_name})` : ""}.</strong>{" "}
+            Linked to your tree through marriage to {birthFamily.spouseIds.map(personName).join(", ")}.
+            {birthFamily.relativeCount === 0 && " No relatives from their side are recorded yet — use Add member to grow it."}
+          </p>
+          <Button variant="outline" size="sm" onClick={() => { setBirthFamilyOf(null); setRootId("p_marcus"); }}>
+            <RotateCcw className="size-3.5" /> Back to your tree
+          </Button>
+        </div>
+      )}
       <FamilyTreeCanvas
-        persons={persons}
-        relationships={relationships}
+        persons={birthFamily?.persons ?? persons}
+        relationships={birthFamily?.relationships ?? relationships}
         timeline={timeline}
         rootId={rootId}
         selectedId={focusedId}
@@ -111,7 +135,7 @@ function FamilyTreePage() {
         onClearSelection={() => setFocusedId(null)}
         onOpenProfile={setProfileId}
         onOpenEvent={openEvent}
-        onRootChange={setRootId}
+        onRootChange={(id) => { setBirthFamilyOf(null); setRootId(id); }}
       />
 
       <LifeEventDialog
@@ -188,7 +212,7 @@ function FamilyTreePage() {
                         <button type="button" onClick={() => openEvent(event.id)} className="flex w-full gap-3 rounded-md border border-border bg-card p-2 text-left text-sm hover:border-primary">
                           <span className="font-display text-primary-deep">{event.year}</span>
                           <span className="flex-1">{event.title}</span>
-                          <span className="text-xs text-muted-foreground">Edit story + media</span>
+                          <span className="text-xs text-muted-foreground">Open story</span>
                         </button>
                       </li>
                     ))}
@@ -197,6 +221,7 @@ function FamilyTreePage() {
 
                 <div className="flex flex-wrap gap-2">
                   {selected.id !== rootId && <Button variant="outline" onClick={() => { setRootId(selected.id); setFocusedId(null); setProfileId(null); }}><GitFork className="size-4" /> View family map</Button>}
+                  {isMarriedIn(selected.id, "p_marcus", relationships) && <Button variant="outline" onClick={() => showBirthFamily(selected.id)}><HeartHandshake className="size-4" /> View {selected.first_name}’s birth family</Button>}
                   <AddLifeEventDialog
                     personName={`${selected.first_name} ${selected.last_name}`}
                     onSubmit={(input) => {
