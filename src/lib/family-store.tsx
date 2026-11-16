@@ -26,6 +26,7 @@ import {
   type RelationshipType,
   type RsvpStatus,
   type TimelineEvent,
+  type TimelineEventMedia,
   type TimelineEventType,
   type User,
 } from "./family-types";

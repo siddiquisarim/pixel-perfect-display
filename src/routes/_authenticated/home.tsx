@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { UserPlus } from "lucide-react";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { GitFork } from "lucide-react";
 
 import { AppShell } from "@/components/app-shell";
 import { RelationshipTreeHome } from "@/components/relationship-tree-home";
@@ -25,8 +25,8 @@ function HomePage() {
   return (
     <AppShell
       title="Welcome back, Marcus"
-      subtitle="Your accepted connections, gathered around the family line. Select anyone to open the complete lineage and life-event tree."
-      action={<Button variant="outline" disabled><UserPlus className="size-4" /> Invite connection</Button>}
+      subtitle="Your accepted connections, gathered around the family line. Hover over a fruit to reveal the person, then select it to open the complete lineage."
+      action={<Button asChild variant="outline"><Link to="/tree"><GitFork className="size-4" /> Open full family tree</Link></Button>}
     >
       <RelationshipTreeHome persons={persons} relationships={relationships} />
     </AppShell>

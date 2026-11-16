@@ -55,6 +55,13 @@ export interface MatchSuggestion {
   status: MatchStatus;
 }
 
+export interface TimelineEventMedia {
+  id: string;
+  kind: "image" | "video";
+  url: string;
+  name: string;
+}
+
 export interface TimelineEvent {
   id: string;
   person_id: string;
@@ -63,6 +70,7 @@ export interface TimelineEvent {
   title: string;
   description: string;
   media_url: string | null;
+  attachments?: TimelineEventMedia[];
 }
 
 export interface FamilyEvent {
