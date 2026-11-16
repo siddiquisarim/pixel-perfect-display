@@ -60,9 +60,9 @@ function TreePreview() {
         <path d="M315 250 C260 205 220 180 165 155 M320 215 C385 170 420 155 465 140" fill="none" className="stroke-tree-line" strokeWidth="4" strokeLinecap="round" />
         <path d="M280 470 C230 480 205 490 155 495 M330 470 C385 480 430 490 475 495" fill="none" className="stroke-tree-ground/50" strokeWidth="8" strokeLinecap="round" />
       </svg>
-      <div className="group absolute left-[12%] top-[12%] w-28 text-center"><FruitPortrait person={previewPeople[0]} className="size-28" /><p className="rounded-full border border-relationship-line bg-relationship-label px-2 py-1 font-display text-sm text-relationship-ink shadow-paper">Robert</p></div>
-      <div className="group absolute right-[8%] top-[14%] w-28 text-center"><FruitPortrait person={previewPeople[1]} className="size-28" /><p className="rounded-full border border-relationship-line bg-relationship-label px-2 py-1 font-display text-sm text-relationship-ink shadow-paper">David</p></div>
-      <div className="group absolute bottom-[9%] left-1/2 w-32 -translate-x-1/2 text-center"><FruitPortrait person={previewPeople[2]} className="size-32" /><p className="rounded-full border border-family bg-relationship-label px-3 py-1 font-display text-base text-relationship-ink shadow-paper">You</p></div>
+      <div className="group absolute left-[12%] top-[12%] w-28 text-center"><FruitPortrait person={previewPeople[0]!} className="size-28" /><p className="rounded-full border border-relationship-line bg-relationship-label px-2 py-1 font-display text-sm text-relationship-ink shadow-paper">Robert</p></div>
+      <div className="group absolute right-[8%] top-[14%] w-28 text-center"><FruitPortrait person={previewPeople[1]!} className="size-28" /><p className="rounded-full border border-relationship-line bg-relationship-label px-2 py-1 font-display text-sm text-relationship-ink shadow-paper">David</p></div>
+      <div className="group absolute bottom-[9%] left-1/2 w-32 -translate-x-1/2 text-center"><FruitPortrait person={previewPeople[2]!} className="size-32" /><p className="rounded-full border border-family bg-relationship-label px-3 py-1 font-display text-base text-relationship-ink shadow-paper">You</p></div>
       <p className="absolute bottom-4 left-5 text-[10px] font-semibold uppercase tracking-[0.16em] text-community">Hover a fruit to reveal the person</p>
     </div>
   );

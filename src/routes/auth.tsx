@@ -10,10 +10,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { setDemoAuthenticated } from "@/lib/demo-auth";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>): { mode: "login" | "signup"; redirect?: string } => ({
-    mode: search.mode === "signup" ? "signup" : "login",
-    redirect: typeof search.redirect === "string" && search.redirect.startsWith("/") ? search.redirect : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { mode: "login" | "signup"; redirect?: string } => {
+    const redirect = typeof search["redirect"] === "string" && search["redirect"].startsWith("/") ? search["redirect"] : undefined;
+    return {
+      mode: search["mode"] === "signup" ? "signup" : "login",
+      ...(redirect ? { redirect } : {}),
+    };
+  },
   head: () => ({
     meta: [
       { title: "Sign in or create an account — FamilyLink" },
