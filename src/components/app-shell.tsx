@@ -59,7 +59,7 @@ export function AppShell({
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-white/10 bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-5 py-3">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/home" className="flex items-center gap-3">
             <KnotLogo />
             <span className="font-display text-xl tracking-tight">FamilyLink</span>
           </Link>
