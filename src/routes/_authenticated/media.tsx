@@ -11,7 +11,7 @@ import { useFamily } from "@/lib/family-store";
 import { MEDIA_LIMITS, type MediaItem } from "@/lib/family-types";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/media")({
+export const Route = createFileRoute("/_authenticated/media")({
   head: () => ({
     meta: [
       { title: "Media Vault — FamilyLink" },

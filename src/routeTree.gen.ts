@@ -9,140 +9,133 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as DiscoveryRouteImport } from './routes/discovery'
-import { Route as EventsRouteImport } from './routes/events'
-import { Route as MediaRouteImport } from './routes/media'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as TimelineRouteImport } from './routes/timeline'
-import { Route as TreeRouteImport } from './routes/tree'
+import { Route as AuthenticatedDiscoveryRouteImport } from './routes/_authenticated/discovery'
+import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
+import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedMediaRouteImport } from './routes/_authenticated/media'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedTimelineRouteImport } from './routes/_authenticated/timeline'
+import { Route as AuthenticatedTreeRouteImport } from './routes/_authenticated/tree'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DiscoveryRoute = DiscoveryRouteImport.update({
-  id: '/discovery',
+const AuthenticatedDiscoveryRoute = AuthenticatedDiscoveryRouteImport.update({
+  id: '/_authenticated/discovery',
   path: '/discovery',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EventsRoute = EventsRouteImport.update({
-  id: '/events',
+const AuthenticatedEventsRoute = AuthenticatedEventsRouteImport.update({
+  id: '/_authenticated/events',
   path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MediaRoute = MediaRouteImport.update({
-  id: '/media',
+const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
+  id: '/_authenticated/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedMediaRoute = AuthenticatedMediaRouteImport.update({
+  id: '/_authenticated/media',
   path: '/media',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/_authenticated/settings',
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TimelineRoute = TimelineRouteImport.update({
-  id: '/timeline',
+const AuthenticatedTimelineRoute = AuthenticatedTimelineRouteImport.update({
+  id: '/_authenticated/timeline',
   path: '/timeline',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TreeRoute = TreeRouteImport.update({
-  id: '/tree',
+const AuthenticatedTreeRoute = AuthenticatedTreeRouteImport.update({
+  id: '/_authenticated/tree',
   path: '/tree',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/discovery': typeof DiscoveryRoute
-  '/events': typeof EventsRoute
-  '/media': typeof MediaRoute
-  '/settings': typeof SettingsRoute
-  '/timeline': typeof TimelineRoute
-  '/tree': typeof TreeRoute
+  '/discovery': typeof AuthenticatedDiscoveryRoute
+  '/events': typeof AuthenticatedEventsRoute
+  '/home': typeof AuthenticatedHomeRoute
+  '/media': typeof AuthenticatedMediaRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/timeline': typeof AuthenticatedTimelineRoute
+  '/tree': typeof AuthenticatedTreeRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/discovery': typeof DiscoveryRoute
-  '/events': typeof EventsRoute
-  '/media': typeof MediaRoute
-  '/settings': typeof SettingsRoute
-  '/timeline': typeof TimelineRoute
-  '/tree': typeof TreeRoute
+  '/discovery': typeof AuthenticatedDiscoveryRoute
+  '/events': typeof AuthenticatedEventsRoute
+  '/home': typeof AuthenticatedHomeRoute
+  '/media': typeof AuthenticatedMediaRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/timeline': typeof AuthenticatedTimelineRoute
+  '/tree': typeof AuthenticatedTreeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/discovery': typeof DiscoveryRoute
-  '/events': typeof EventsRoute
-  '/media': typeof MediaRoute
-  '/settings': typeof SettingsRoute
-  '/timeline': typeof TimelineRoute
-  '/tree': typeof TreeRoute
+  '/_authenticated/discovery': typeof AuthenticatedDiscoveryRoute
+  '/_authenticated/events': typeof AuthenticatedEventsRoute
+  '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/media': typeof AuthenticatedMediaRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/timeline': typeof AuthenticatedTimelineRoute
+  '/_authenticated/tree': typeof AuthenticatedTreeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/auth'
     | '/discovery'
     | '/events'
+    | '/home'
     | '/media'
     | '/settings'
     | '/timeline'
     | '/tree'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/auth'
     | '/discovery'
     | '/events'
+    | '/home'
     | '/media'
     | '/settings'
     | '/timeline'
     | '/tree'
   id:
     | '__root__'
-    | '/'
     | '/auth'
-    | '/discovery'
-    | '/events'
-    | '/media'
-    | '/settings'
-    | '/timeline'
-    | '/tree'
+    | '/_authenticated/discovery'
+    | '/_authenticated/events'
+    | '/_authenticated/home'
+    | '/_authenticated/media'
+    | '/_authenticated/settings'
+    | '/_authenticated/timeline'
+    | '/_authenticated/tree'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
-  DiscoveryRoute: typeof DiscoveryRoute
-  EventsRoute: typeof EventsRoute
-  MediaRoute: typeof MediaRoute
-  SettingsRoute: typeof SettingsRoute
-  TimelineRoute: typeof TimelineRoute
-  TreeRoute: typeof TreeRoute
+  AuthenticatedDiscoveryRoute: typeof AuthenticatedDiscoveryRoute
+  AuthenticatedEventsRoute: typeof AuthenticatedEventsRoute
+  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedMediaRoute: typeof AuthenticatedMediaRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedTimelineRoute: typeof AuthenticatedTimelineRoute
+  AuthenticatedTreeRoute: typeof AuthenticatedTreeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -150,60 +143,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/discovery': {
-      id: '/discovery'
+    '/_authenticated/discovery': {
+      id: '/_authenticated/discovery'
       path: '/discovery'
       fullPath: '/discovery'
-      preLoaderRoute: typeof DiscoveryRouteImport
+      preLoaderRoute: typeof AuthenticatedDiscoveryRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/events': {
-      id: '/events'
+    '/_authenticated/events': {
+      id: '/_authenticated/events'
       path: '/events'
       fullPath: '/events'
-      preLoaderRoute: typeof EventsRouteImport
+      preLoaderRoute: typeof AuthenticatedEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/media': {
-      id: '/media'
+    '/_authenticated/home': {
+      id: '/_authenticated/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthenticatedHomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/media': {
+      id: '/_authenticated/media'
       path: '/media'
       fullPath: '/media'
-      preLoaderRoute: typeof MediaRouteImport
+      preLoaderRoute: typeof AuthenticatedMediaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings': {
-      id: '/settings'
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/timeline': {
-      id: '/timeline'
+    '/_authenticated/timeline': {
+      id: '/_authenticated/timeline'
       path: '/timeline'
       fullPath: '/timeline'
-      preLoaderRoute: typeof TimelineRouteImport
+      preLoaderRoute: typeof AuthenticatedTimelineRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tree': {
-      id: '/tree'
+    '/_authenticated/tree': {
+      id: '/_authenticated/tree'
       path: '/tree'
       fullPath: '/tree'
-      preLoaderRoute: typeof TreeRouteImport
+      preLoaderRoute: typeof AuthenticatedTreeRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
-  DiscoveryRoute: DiscoveryRoute,
-  EventsRoute: EventsRoute,
-  MediaRoute: MediaRoute,
-  SettingsRoute: SettingsRoute,
-  TimelineRoute: TimelineRoute,
-  TreeRoute: TreeRoute,
+  AuthenticatedDiscoveryRoute: AuthenticatedDiscoveryRoute,
+  AuthenticatedEventsRoute: AuthenticatedEventsRoute,
+  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedMediaRoute: AuthenticatedMediaRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedTimelineRoute: AuthenticatedTimelineRoute,
+  AuthenticatedTreeRoute: AuthenticatedTreeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

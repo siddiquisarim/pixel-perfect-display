@@ -29,7 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useFamily } from "@/lib/family-store";
 import type { FamilyEvent, FamilyEventType, RsvpStatus } from "@/lib/family-types";
 
-export const Route = createFileRoute("/events")({
+export const Route = createFileRoute("/_authenticated/events")({
   head: () => ({
     meta: [
       { title: "Events & RSVP — FamilyLink" },

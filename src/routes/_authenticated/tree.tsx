@@ -36,7 +36,7 @@ import type {
   TimelineEventType,
 } from "@/lib/family-types";
 
-export const Route = createFileRoute("/tree")({
+export const Route = createFileRoute("/_authenticated/tree")({
   head: () => ({
     meta: [
       { title: "Family Tree — FamilyLink" },

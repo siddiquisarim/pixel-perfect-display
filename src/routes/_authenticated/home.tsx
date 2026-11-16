@@ -6,7 +6,7 @@ import { RelationshipTreeHome } from "@/components/relationship-tree-home";
 import { Button } from "@/components/ui/button";
 import { useFamily } from "@/lib/family-store";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
     meta: [
       { title: "Your Relationship Tree — FamilyLink" },

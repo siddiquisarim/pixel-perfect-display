@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { useFamily } from "@/lib/family-store";
 import type { GeoPrecision } from "@/lib/family-types";
 
-export const Route = createFileRoute("/settings")({
+export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
       { title: "Settings & Privacy — FamilyLink" },

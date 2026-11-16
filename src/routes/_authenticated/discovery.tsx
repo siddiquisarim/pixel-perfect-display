@@ -26,7 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useFamily } from "@/lib/family-store";
 import type { MatchSuggestion } from "@/lib/family-types";
 
-export const Route = createFileRoute("/discovery")({
+export const Route = createFileRoute("/_authenticated/discovery")({
   head: () => ({
     meta: [
       { title: "Discovery & Matches — FamilyLink" },
