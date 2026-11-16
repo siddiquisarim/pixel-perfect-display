@@ -101,7 +101,7 @@ function FamilyTreePage() {
   return (
     <AppShell
       title={rootId === "p_marcus" ? "Family Tree" : `${rootPerson?.first_name ?? "Relative"}’s Family Tree`}
-      subtitle="A living map of connected bloodlines. Select fruit for life stories, add members, or explore the tree from another relative’s perspective."
+      subtitle="A living map of connected bloodlines. Select a portrait for life stories, add members, or explore the tree from another relative’s perspective."
       action={
         <AddRelativeDialog
           open={addOpen}
@@ -109,7 +109,7 @@ function FamilyTreePage() {
           persons={persons}
           onSubmit={(input) => {
             addPerson(input);
-            toast.success(`${input.first_name} ${input.last_name} added as a new fruit on the tree`);
+            toast.success(`${input.first_name} ${input.last_name} added to the family tree`);
             setAddOpen(false);
           }}
         />

@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { FruitPortrait } from "@/components/fruit-portrait";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -159,7 +158,9 @@ function FruitNode({
         className="group flex h-auto w-full flex-col items-center whitespace-normal rounded-2xl px-2 py-0 hover:bg-transparent"
       >
         <span className="relative">
-          <FruitPortrait person={person} className={isRoot ? "size-32" : "size-28"} />
+          <span className={cn("flex items-center justify-center overflow-hidden rounded-full border-4 border-paper bg-secondary shadow-paper ring-2 ring-tree-line transition group-hover:ring-primary", isRoot ? "size-28" : "size-24", active && "ring-primary")}>
+            {person.avatar_url ? <img src={person.avatar_url} alt="" loading="lazy" className="size-full object-cover" /> : <span className="font-display text-2xl text-secondary-foreground">{person.first_name.charAt(0)}{person.last_name.charAt(0)}</span>}
+          </span>
           {verified && <span className="absolute bottom-3 right-2 flex size-6 items-center justify-center rounded-full border-2 border-tree-night bg-verified text-verified-foreground"><ShieldCheck className="size-3.5" /></span>}
         </span>
         <span className={cn("-mt-2 block w-[220px] border border-tree-line bg-paper px-3 py-2 text-paper-foreground shadow-paper transition-colors group-hover:border-primary", active && "border-primary shadow-gold")}>
@@ -177,7 +178,7 @@ function FruitNode({
           </button>
         )) : <p className="py-1 text-[9px] text-foreground/50">No life events recorded</p>}
         <div className="mt-1 flex items-center justify-between gap-2">
-          {person.is_minor ? <Badge variant="outline" className="gap-1 border-tree-line px-1.5 py-0 text-[8px] text-foreground/70"><Lock className="size-2.5" /> Protected minor</Badge> : <span className="text-[8px] uppercase tracking-wider text-foreground/40">Select fruit for life tree</span>}
+          {person.is_minor ? <Badge variant="outline" className="gap-1 border-tree-line px-1.5 py-0 text-[8px] text-foreground/70"><Lock className="size-2.5" /> Protected minor</Badge> : <span className="text-[8px] uppercase tracking-wider text-foreground/40">Select portrait for life tree</span>}
           {events.length > 2 && <span className="text-[8px] text-foreground/45">+{events.length - 2}</span>}
         </div>
       </div>
@@ -355,7 +356,7 @@ export function FamilyTreeCanvas({
   return (
     <section aria-label={`Interactive ${rootPerson?.last_name ?? "family"} family tree`} className="relative overflow-hidden rounded-lg border border-tree-line/60 bg-tree-night shadow-inner">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-tree-line/40 bg-background/35 px-4 py-4 sm:px-5">
-        <div className="min-w-0"><p className="truncate font-display text-lg text-foreground">{rootPerson?.first_name} {rootPerson?.last_name}’s family tree</p><p className="mt-1 max-w-xl text-xs leading-relaxed text-foreground/60">Select a fruit for a life tree, or use Family map to make that relative the center of the lineage.</p></div>
+        <div className="min-w-0"><p className="truncate font-display text-lg text-foreground">{rootPerson?.first_name} {rootPerson?.last_name}’s family tree</p><p className="mt-1 max-w-xl text-xs leading-relaxed text-foreground/60">Select a portrait for a life tree, or use Family map to make that relative the center of the lineage.</p></div>
         <div className="flex items-center gap-2">
           {rootId !== ROOT_ID && <Button variant="outline" size="sm" onClick={() => onRootChange(ROOT_ID)} className="border-tree-line bg-background/75 text-foreground hover:bg-surface"><RotateCcw className="size-3.5" /> Return to your tree</Button>}
           <TooltipProvider delayDuration={200}><div className="flex shrink-0 items-center gap-1 border border-tree-line/60 bg-background/75 p-1 shadow-lg backdrop-blur">
@@ -406,7 +407,7 @@ export function FamilyTreeCanvas({
           })}
 
           <div className="absolute bottom-6 left-1/2 z-20 -translate-x-1/2 border-t border-primary/40 px-6 pt-2 text-center"><p className="font-display text-xs text-foreground/70">{rootPerson?.last_name} lineage · every branch connected</p></div>
-          <div className="absolute bottom-5 right-5 z-20 flex items-center gap-2 border border-tree-line/60 bg-background/80 px-3 py-2 text-[9px] text-foreground/65 backdrop-blur"><LocateFixed className="size-3.5 text-primary" /> Fruit opens stories · Family map changes perspective</div>
+          <div className="absolute bottom-5 right-5 z-20 flex items-center gap-2 border border-tree-line/60 bg-background/80 px-3 py-2 text-[9px] text-foreground/65 backdrop-blur"><LocateFixed className="size-3.5 text-primary" /> Portrait opens stories · Family map changes perspective</div>
         </div>
       </div>
     </section>

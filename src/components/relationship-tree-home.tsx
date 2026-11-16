@@ -3,7 +3,10 @@ import { Maximize2, Minus, Plus, ShieldCheck } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { FruitPortrait } from "@/components/fruit-portrait";
+import { AddRelativeDialog } from "@/components/add-relative-dialog";
 import { Button } from "@/components/ui/button";
+import { useFamily } from "@/lib/family-store";
+import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { FamilyPerson, Relationship } from "@/lib/family-types";
 import { cn } from "@/lib/utils";
@@ -41,7 +44,7 @@ function createRadialNodes(persons: FamilyPerson[], relationships: Relationship[
 
   const connectedIds = new Set<string>([ROOT_ID]);
   for (const relationship of relationships) {
-    if (relationship.verification_status !== "connected") continue;
+    if (relationship.verification_status === "dismissed") continue;
     if (relationship.person_a_id === ROOT_ID) connectedIds.add(relationship.person_b_id);
     if (relationship.person_b_id === ROOT_ID) connectedIds.add(relationship.person_a_id);
   }
@@ -102,6 +105,8 @@ function PortraitNode({ node, root }: { node: NetworkNode; root: boolean }) {
 
 export function RelationshipTreeHome({ persons, relationships }: { persons: FamilyPerson[]; relationships: Relationship[] }) {
   const [zoom, setZoom] = useState(1);
+  const [addOpen, setAddOpen] = useState(false);
+  const { addPerson } = useFamily();
   const viewportRef = useRef<HTMLDivElement>(null);
   const nodes = useMemo(() => createRadialNodes(persons, relationships), [persons, relationships]);
 
@@ -131,6 +136,17 @@ export function RelationshipTreeHome({ persons, relationships }: { persons: Fami
       <div className="absolute right-4 top-4 z-30 sm:right-6 sm:top-6">
         <TooltipProvider delayDuration={200}>
           <div className="flex items-center gap-1 border border-relationship-line bg-relationship-label/90 p-1 shadow-paper backdrop-blur">
+            <AddRelativeDialog
+              open={addOpen}
+              onOpenChange={setAddOpen}
+              persons={persons}
+              trigger={<Button size="icon" aria-label="Add a family member fruit" className="bg-primary text-primary-foreground hover:bg-primary-deep"><Plus /></Button>}
+              onSubmit={(input) => {
+                addPerson(input);
+                toast.success(`${input.first_name} ${input.last_name} added as a new fruit on your tree`);
+                setAddOpen(false);
+              }}
+            />
             <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Zoom in" className="text-relationship-ink hover:bg-secondary" onClick={() => setZoom((value) => Math.min(1.25, value + 0.1))}><Plus /></Button></TooltipTrigger><TooltipContent>Zoom in</TooltipContent></Tooltip>
             <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Zoom out" className="text-relationship-ink hover:bg-secondary" onClick={() => setZoom((value) => Math.max(0.7, value - 0.1))}><Minus /></Button></TooltipTrigger><TooltipContent>Zoom out</TooltipContent></Tooltip>
             <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Fit relationship tree" className="text-relationship-ink hover:bg-secondary" onClick={centerTree}><Maximize2 /></Button></TooltipTrigger><TooltipContent>Center tree</TooltipContent></Tooltip>
