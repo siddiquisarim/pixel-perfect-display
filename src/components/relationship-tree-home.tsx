@@ -3,7 +3,10 @@ import { Maximize2, Minus, Plus, ShieldCheck } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { FruitPortrait } from "@/components/fruit-portrait";
+import { AddRelativeDialog } from "@/components/add-relative-dialog";
 import { Button } from "@/components/ui/button";
+import { useFamily } from "@/lib/family-store";
+import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { FamilyPerson, Relationship } from "@/lib/family-types";
 import { cn } from "@/lib/utils";
@@ -14,7 +17,7 @@ const CANVAS_HEIGHT = 760;
 const ROOT_POINT = { x: 560, y: 472 };
 
 type ConnectionKind = "family" | "friend" | "community";
-type NetworkNode = { person: FamilyPerson; x: number; y: number; kind: ConnectionKind; label: string };
+type NetworkNode = { person: FamilyPerson; x: number; y: number; kind: ConnectionKind; label: string; pending?: boolean };
 
 const KIND_LABELS: Record<ConnectionKind, string> = {
   family: "Family",
@@ -41,7 +44,6 @@ function createRadialNodes(persons: FamilyPerson[], relationships: Relationship[
 
   const connectedIds = new Set<string>([ROOT_ID]);
   for (const relationship of relationships) {
-    if (relationship.verification_status !== "connected") continue;
     if (relationship.person_a_id === ROOT_ID) connectedIds.add(relationship.person_b_id);
     if (relationship.person_b_id === ROOT_ID) connectedIds.add(relationship.person_a_id);
   }
@@ -67,6 +69,7 @@ function createRadialNodes(persons: FamilyPerson[], relationships: Relationship[
       }),
       kind: "family" as const,
       label: connectionLabel(person.id, relationships),
+      pending: !relationships.some((r) => r.verification_status === "connected" && ((r.person_a_id === ROOT_ID && r.person_b_id === person.id) || (r.person_b_id === ROOT_ID && r.person_a_id === person.id))),
     })),
   ];
 }
@@ -94,7 +97,7 @@ function PortraitNode({ node, root }: { node: NetworkNode; root: boolean }) {
       </span>
       <span className={cn("mt-3 inline-flex max-w-44 flex-col border bg-relationship-label px-3 py-1.5 shadow-paper transition-colors", root ? "border-primary" : "border-relationship-line group-hover:border-primary")}>
         <span className="font-display text-base leading-none text-relationship-ink">{node.person.first_name} {node.person.last_name}</span>
-        <span className={cn("mt-1 text-[9px] font-semibold uppercase tracking-[0.14em]", node.kind === "family" ? "text-family" : node.kind === "friend" ? "text-family-friend" : "text-community")}>{root ? "You · View full lineage" : `${node.label} · Accepted`}</span>
+        <span className={cn("mt-1 text-[9px] font-semibold uppercase tracking-[0.14em]", node.kind === "family" ? "text-family" : node.kind === "friend" ? "text-family-friend" : "text-community")}>{root ? "You · View full lineage" : `${node.label} · ${node.pending ? "Invite pending" : "Accepted"}`}</span>
       </span>
     </Link>
   );
@@ -102,6 +105,8 @@ function PortraitNode({ node, root }: { node: NetworkNode; root: boolean }) {
 
 export function RelationshipTreeHome({ persons, relationships }: { persons: FamilyPerson[]; relationships: Relationship[] }) {
   const [zoom, setZoom] = useState(1);
+  const [addOpen, setAddOpen] = useState(false);
+  const { addPerson } = useFamily();
   const viewportRef = useRef<HTMLDivElement>(null);
   const nodes = useMemo(() => createRadialNodes(persons, relationships), [persons, relationships]);
 
@@ -131,6 +136,17 @@ export function RelationshipTreeHome({ persons, relationships }: { persons: Fami
       <div className="absolute right-4 top-4 z-30 sm:right-6 sm:top-6">
         <TooltipProvider delayDuration={200}>
           <div className="flex items-center gap-1 border border-relationship-line bg-relationship-label/90 p-1 shadow-paper backdrop-blur">
+            <AddRelativeDialog
+              open={addOpen}
+              onOpenChange={setAddOpen}
+              persons={persons}
+              trigger={<Button size="icon" aria-label="Add a family member fruit" className="bg-primary text-primary-foreground hover:bg-primary-deep"><Plus /></Button>}
+              onSubmit={(input) => {
+                addPerson(input);
+                toast.success(`${input.first_name} ${input.last_name} added as a new fruit on your tree`);
+                setAddOpen(false);
+              }}
+            />
             <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Zoom in" className="text-relationship-ink hover:bg-secondary" onClick={() => setZoom((value) => Math.min(1.25, value + 0.1))}><Plus /></Button></TooltipTrigger><TooltipContent>Zoom in</TooltipContent></Tooltip>
             <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Zoom out" className="text-relationship-ink hover:bg-secondary" onClick={() => setZoom((value) => Math.max(0.7, value - 0.1))}><Minus /></Button></TooltipTrigger><TooltipContent>Zoom out</TooltipContent></Tooltip>
             <Tooltip><TooltipTrigger asChild><Button variant="ghost" size="icon" aria-label="Fit relationship tree" className="text-relationship-ink hover:bg-secondary" onClick={centerTree}><Maximize2 /></Button></TooltipTrigger><TooltipContent>Center tree</TooltipContent></Tooltip>
@@ -176,7 +192,7 @@ export function RelationshipTreeHome({ persons, relationships }: { persons: Fami
         <div className="flex flex-wrap items-center gap-4 text-[10px] font-semibold uppercase tracking-[0.12em] text-relationship-ink">
           {(Object.keys(KIND_LABELS) as ConnectionKind[]).map((kind) => <span key={kind} className="flex items-center gap-2"><span className={cn("size-2.5 rounded-full", kind === "family" ? "bg-family" : kind === "friend" ? "bg-family-friend" : "bg-community")} />{KIND_LABELS[kind]}</span>)}
         </div>
-        <div className="flex items-center gap-2 text-xs text-community"><ShieldCheck className="size-4 text-family" /> Only accepted connections appear here</div>
+        <div className="flex items-center gap-2 text-xs text-community"><ShieldCheck className="size-4 text-family" /> New fruit shows “Invite pending” until accepted</div>
       </footer>
     </section>
   );
