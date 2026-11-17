@@ -235,3 +235,23 @@
   .tree-branch-active { animation: none; }
   .animate-branch-draw { animation: none; }
 }
+
+@keyframes fruit-sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+@keyframes fruit-shine {
+  0%, 70% { transform: translateX(-140%) rotate(20deg); opacity: 0; }
+  80% { opacity: 0.55; }
+  100% { transform: translateX(160%) rotate(20deg); opacity: 0; }
+}
+@utility animate-fruit-sway {
+  animation: fruit-sway 4.2s ease-in-out infinite;
+  transform-origin: 50% 4%;
+}
+@utility animate-fruit-shine {
+  animation: fruit-shine 5.5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-fruit-sway, .animate-fruit-shine { animation: none; }
+}
