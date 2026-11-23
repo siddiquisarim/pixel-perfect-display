@@ -31,9 +31,14 @@ function createRadialNodes(persons: FamilyPerson[], relationships: Relationship[
   if (!root) return [];
 
   const connectedIds = new Set<string>([ROOT_ID, ...persons.filter((p) => p.source_match_id).map((p) => p.id)]);
-  for (const relationship of relationships) {
-    if (relationship.person_a_id === ROOT_ID) connectedIds.add(relationship.person_b_id);
-    if (relationship.person_b_id === ROOT_ID) connectedIds.add(relationship.person_a_id);
+  const hidden = new Set(persons.filter((p) => p.birth_side_of).map((p) => p.id));
+  const queue = [ROOT_ID];
+  while (queue.length) {
+    const current = queue.shift()!;
+    for (const r of relationships) {
+      const other = r.person_a_id === current ? r.person_b_id : r.person_b_id === current ? r.person_a_id : null;
+      if (other && !hidden.has(other) && !connectedIds.has(other)) { connectedIds.add(other); queue.push(other); }
+    }
   }
 
   const accepted = persons.filter((person) => person.id !== ROOT_ID && connectedIds.has(person.id));
@@ -57,7 +62,7 @@ function createRadialNodes(persons: FamilyPerson[], relationships: Relationship[
       }),
       kind: "family" as const,
       label: kinshipLabel(ROOT_ID, person.id, persons, relationships),
-      pending: !person.source_match_id && !relationships.some((r) => r.verification_status === "connected" && ((r.person_a_id === ROOT_ID && r.person_b_id === person.id) || (r.person_b_id === ROOT_ID && r.person_a_id === person.id))),
+      pending: !person.source_match_id && !relationships.some((r) => r.verification_status === "connected" && (r.person_a_id === person.id || r.person_b_id === person.id)),
     })),
   ];
 }
