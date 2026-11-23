@@ -246,7 +246,7 @@ function DiscoveryPage() {
                 setConnecting(null);
                 setNote("");
                 toast.success("Connection accepted by both parties", {
-                  description: "Shared relationships moved from claimed to connected.",
+                  description: "They now appear on your Family Tree and home tree as a connected relative.",
                 });
               }}
             >

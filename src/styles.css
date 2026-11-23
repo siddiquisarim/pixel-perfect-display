@@ -255,3 +255,14 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-fruit-sway, .animate-fruit-shine { animation: none; }
 }
+
+@utility diary-lines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 31px,
+    color-mix(in oklab, var(--color-border-strong) 70%, transparent) 31px,
+    color-mix(in oklab, var(--color-border-strong) 70%, transparent) 32px
+  );
+  line-height: 32px;
+}

@@ -9,6 +9,7 @@ import { useFamily } from "@/lib/family-store";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { FamilyPerson, Relationship } from "@/lib/family-types";
+import { kinshipLabel } from "@/lib/kinship";
 import { cn } from "@/lib/utils";
 
 const ROOT_ID = "p_marcus";
@@ -25,24 +26,11 @@ const KIND_LABELS: Record<ConnectionKind, string> = {
   community: "Community",
 };
 
-function connectionLabel(personId: string, relationships: Relationship[]) {
-  const direct = relationships.find(
-    (relationship) =>
-      (relationship.person_a_id === ROOT_ID && relationship.person_b_id === personId) ||
-      (relationship.person_b_id === ROOT_ID && relationship.person_a_id === personId),
-  );
-  if (!direct) return "Extended family";
-  if (direct.relationship_type === "parent") {
-    return direct.person_a_id === personId ? "Parent" : "Child";
-  }
-  return direct.relationship_type.charAt(0).toUpperCase() + direct.relationship_type.slice(1);
-}
-
 function createRadialNodes(persons: FamilyPerson[], relationships: Relationship[]): NetworkNode[] {
   const root = persons.find((person) => person.id === ROOT_ID);
   if (!root) return [];
 
-  const connectedIds = new Set<string>([ROOT_ID]);
+  const connectedIds = new Set<string>([ROOT_ID, ...persons.filter((p) => p.source_match_id).map((p) => p.id)]);
   for (const relationship of relationships) {
     if (relationship.person_a_id === ROOT_ID) connectedIds.add(relationship.person_b_id);
     if (relationship.person_b_id === ROOT_ID) connectedIds.add(relationship.person_a_id);
@@ -68,8 +56,8 @@ function createRadialNodes(persons: FamilyPerson[], relationships: Relationship[
         y: 360 + Math.sin(index * 1.7) * (220 + Math.floor(index / slots.length) * 45),
       }),
       kind: "family" as const,
-      label: connectionLabel(person.id, relationships),
-      pending: !relationships.some((r) => r.verification_status === "connected" && ((r.person_a_id === ROOT_ID && r.person_b_id === person.id) || (r.person_b_id === ROOT_ID && r.person_a_id === person.id))),
+      label: kinshipLabel(ROOT_ID, person.id, persons, relationships),
+      pending: !person.source_match_id && !relationships.some((r) => r.verification_status === "connected" && ((r.person_a_id === ROOT_ID && r.person_b_id === person.id) || (r.person_b_id === ROOT_ID && r.person_a_id === person.id))),
     })),
   ];
 }

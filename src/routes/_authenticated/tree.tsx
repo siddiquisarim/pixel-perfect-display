@@ -72,13 +72,8 @@ function FamilyTreePage() {
   const navigate = useNavigate();
   const birthFamily = birthFamilyOf ? getBirthFamily(birthFamilyOf, persons, relationships) : null;
   const birthFamilyPerson = persons.find((p) => p.id === birthFamilyOf);
-  // Married-in relatives' own birth families stay on their separate map, not in the main lineage.
-  const hiddenIds = new Set<string>();
-  for (const p of persons) {
-    if (!p.maiden_name || hiddenIds.has(p.id)) continue;
-    const side = getBirthFamily(p.id, persons, relationships);
-    for (const m of side.persons) if (m.id !== p.id && !side.spouseIds.includes(m.id)) hiddenIds.add(m.id);
-  }
+  // Relatives on a married-in person's own side stay on their birth-family map, not in the main lineage.
+  const hiddenIds = new Set(persons.filter((p) => p.birth_side_of).map((p) => p.id));
   const mainPersons = persons.filter((p) => !hiddenIds.has(p.id));
   const mainRelationships = relationships.filter((r) => !hiddenIds.has(r.person_a_id) && !hiddenIds.has(r.person_b_id));
 
@@ -106,9 +101,11 @@ function FamilyTreePage() {
         <AddRelativeDialog
           open={addOpen}
           onOpenChange={setAddOpen}
-          persons={persons}
+          key={birthFamilyOf ?? rootId}
+          persons={birthFamily?.persons ?? mainPersons}
+          defaultAnchorId={birthFamilyOf ?? rootId}
           onSubmit={(input) => {
-            addPerson(input);
+            addPerson(birthFamilyOf ? { ...input, birth_side_of: birthFamilyOf } : input);
             toast.success(`${input.first_name} ${input.last_name} added to the family tree`);
             setAddOpen(false);
           }}

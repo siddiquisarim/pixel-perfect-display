@@ -30,6 +30,12 @@ export interface FamilyPerson {
   is_living: boolean;
   avatar_url: string | null;
   is_minor: boolean;
+  /** Recorded sex, used to tell fathers from mothers and paternal from maternal lines. */
+  sex?: "male" | "female";
+  /** Set for relatives on a married-in person's own side; they appear on that person's birth-family map. */
+  birth_side_of?: string;
+  /** Set when the person joined through an accepted discovery match. */
+  source_match_id?: string;
 }
 
 export interface Relationship {
@@ -53,6 +59,12 @@ export interface MatchSuggestion {
   explanation: string;
   lineage_path: string[];
   status: MatchStatus;
+  /** How the match joins the tree once both sides accept. */
+  connection_plan?: {
+    anchor_person_id: string;
+    steps: { first_name: string; last_name: string; birth_year: number | null; birth_place: string | null; sex?: "male" | "female"; relation: "child" | "sibling" }[];
+    birth_side_of?: string;
+  };
 }
 
 export interface TimelineEventMedia {
@@ -71,6 +83,23 @@ export interface TimelineEvent {
   description: string;
   media_url: string | null;
   attachments?: TimelineEventMedia[];
+  date_label?: string | undefined;
+  location?: string | undefined;
+  mood?: string | undefined;
+  people_ids?: string[];
+  tags?: string[];
+  entries?: DiaryEntry[];
+  captions?: Record<string, string>;
+}
+
+export type DiaryEntryKind = "memory" | "note" | "quote" | "letter";
+
+export interface DiaryEntry {
+  id: string;
+  kind: DiaryEntryKind;
+  author: string;
+  written_at: string;
+  text: string;
 }
 
 export interface FamilyEvent {

@@ -14,3 +14,5 @@
 - Keep the signed-in home as an accepted-connection tree overview and the detailed lineage at `/tree`, because overview portraits must lead into the full family record.
 
 - Keep `/` as the public product landing page and the signed-in overview at `/home` behind the demo session gate, because visitors must understand the product and authenticate before entering family records.
+- Add relatives through `planRelative` (src/lib/add-relative.ts) and label them with `kinshipLabel` (src/lib/kinship.ts), because grandparents/siblings must attach through parents and labels must follow the real path.
+- Hide married-in relatives' own side from the main lineage via `FamilyPerson.birth_side_of`, not graph heuristics, because heuristics hid the whole tree when new people were added.

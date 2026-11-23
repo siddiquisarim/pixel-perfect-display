@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { FamilyPerson, Relationship, TimelineEvent } from "@/lib/family-types";
+import { kinshipLabel } from "@/lib/kinship";
 import { cn } from "@/lib/utils";
 
 type Point = { x: number; y: number };
@@ -27,14 +28,6 @@ const CARD_WIDTH = 240;
 const ROW_HEIGHT = 340;
 const SIDE_GUTTER = 140;
 const TOP_GUTTER = 190;
-
-const KNOWN_RELATIONS: Record<string, string> = {
-  p_robert: "Paternal grandfather",
-  p_pearl: "Paternal grandmother",
-  p_david: "Father",
-  p_yvonne: "Mother",
-  p_amara: "Daughter", p_harold: "Maternal grandfather", p_ruby: "Maternal grandmother", p_clive: "Maternal uncle",
-};
 
 const EVENT_LABELS = {
   birth: "Born",
@@ -83,6 +76,23 @@ function createLayout(persons: FamilyPerson[], relationships: Relationship[], ro
   }
 
   const orderedRows = [...rows.entries()].sort(([a], [b]) => a - b);
+  // Order each row by where its relatives sit in neighbouring rows so branches don't cross.
+  const neighbours = new Map<string, string[]>();
+  for (const r of relationships) {
+    neighbours.set(r.person_a_id, [...(neighbours.get(r.person_a_id) ?? []), r.person_b_id]);
+    neighbours.set(r.person_b_id, [...(neighbours.get(r.person_b_id) ?? []), r.person_a_id]);
+  }
+  for (let pass = 0; pass < 4; pass += 1) {
+    const slot = new Map<string, number>();
+    orderedRows.forEach(([, people]) => people.forEach((person, i) => slot.set(person.id, (i + 0.5) / people.length)));
+    orderedRows.forEach((row) => {
+      const score = (id: string) => {
+        const values = (neighbours.get(id) ?? []).map((n) => slot.get(n)).filter((v): v is number => v !== undefined);
+        return values.length ? values.reduce((a, b) => a + b, 0) / values.length : (slot.get(id) ?? 0.5);
+      };
+      row[1] = [...row[1]].sort((a, b) => score(a.id) - score(b.id));
+    });
+  }
   const widestRow = Math.max(...orderedRows.map(([, people]) => people.length), 1);
   const width = Math.max(1100, widestRow * (CARD_WIDTH + 60) + SIDE_GUTTER * 2);
   const height = Math.max(930, orderedRows.length * ROW_HEIGHT + TOP_GUTTER + 100);
@@ -102,20 +112,9 @@ function createLayout(persons: FamilyPerson[], relationships: Relationship[], ro
   return { positions, orderedRows, width, height };
 }
 
-function relationshipLabel(personId: string, relationships: Relationship[], rootId: string) {
+function relationshipLabel(personId: string, persons: FamilyPerson[], relationships: Relationship[], rootId: string) {
   if (personId === rootId) return rootId === ROOT_ID ? "You" : "Family tree root";
-  if (rootId === ROOT_ID && KNOWN_RELATIONS[personId]) return KNOWN_RELATIONS[personId];
-  const direct = relationships.find(
-    (relationship) =>
-      (relationship.person_a_id === personId && relationship.person_b_id === rootId) ||
-      (relationship.person_b_id === personId && relationship.person_a_id === rootId),
-  );
-  if (!direct) return "Connected family branch";
-  if (direct.relationship_type === "spouse") return "Spouse";
-  if (direct.relationship_type === "sibling") return "Sibling";
-  if (direct.relationship_type === "grandparent") return "Grandparent";
-  if (direct.relationship_type === "parent") return direct.person_a_id === personId ? "Parent" : "Child";
-  return "Relative";
+  return kinshipLabel(rootId, personId, persons, relationships);
 }
 
 function branchPath(from: Point, to: Point, spouse: boolean) {
@@ -403,7 +402,7 @@ export function FamilyTreeCanvas({
             if (!position) return null;
             const events = timeline.filter((event) => event.person_id === person.id);
             const verified = relationships.some((relationship) => (relationship.person_a_id === person.id || relationship.person_b_id === person.id) && relationship.verification_status === "connected");
-            return <FruitNode key={person.id} person={person} position={position} relation={relationshipLabel(person.id, relationships, rootId)} events={events} verified={verified} active={selectedId === person.id || lineageIds.has(person.id)} isRoot={person.id === rootId} onSelect={() => onSelect(person.id)} onExploreLineage={() => exploreLineage(person.id)} />;
+            return <FruitNode key={person.id} person={person} position={position} relation={relationshipLabel(person.id, persons, relationships, rootId)} events={events} verified={verified} active={selectedId === person.id || lineageIds.has(person.id)} isRoot={person.id === rootId} onSelect={() => onSelect(person.id)} onExploreLineage={() => exploreLineage(person.id)} />;
           })}
 
           <div className="absolute bottom-6 left-1/2 z-20 -translate-x-1/2 border-t border-primary/40 px-6 pt-2 text-center"><p className="font-display text-xs text-foreground/70">{rootPerson?.last_name} lineage · every branch connected</p></div>

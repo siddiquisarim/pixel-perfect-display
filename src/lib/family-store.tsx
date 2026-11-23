@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -23,13 +24,13 @@ import {
   type MediaItem,
   type PrivacySettings,
   type Relationship,
-  type RelationshipType,
   type RsvpStatus,
   type TimelineEvent,
-  type TimelineEventMedia,
   type TimelineEventType,
   type User,
 } from "./family-types";
+import { planRelative, type RelativeOption } from "./add-relative";
+import { joinMatch } from "./join-match";
 
 const CURRENT_YEAR = 2026;
 
@@ -56,6 +57,7 @@ const seedPersons: FamilyPerson[] = [
     is_living: true,
     avatar_url: portraitMarcus,
     is_minor: false,
+    sex: "male",
   },
   {
     id: "p_david",
@@ -69,6 +71,7 @@ const seedPersons: FamilyPerson[] = [
     is_living: true,
     avatar_url: portraitDavid,
     is_minor: false,
+    sex: "male",
   },
   {
     id: "p_yvonne",
@@ -82,6 +85,7 @@ const seedPersons: FamilyPerson[] = [
     is_living: true,
     avatar_url: null,
     is_minor: false,
+    sex: "female",
   },
   {
     id: "p_robert",
@@ -95,6 +99,7 @@ const seedPersons: FamilyPerson[] = [
     is_living: false,
     avatar_url: portraitRobert,
     is_minor: false,
+    sex: "male",
   },
   {
     id: "p_pearl",
@@ -108,6 +113,7 @@ const seedPersons: FamilyPerson[] = [
     is_living: false,
     avatar_url: null,
     is_minor: false,
+    sex: "female",
   },
   {
     id: "p_amara",
@@ -121,6 +127,7 @@ const seedPersons: FamilyPerson[] = [
     is_living: true,
     avatar_url: null,
     is_minor: true,
+    sex: "female",
   },
   {
     id: "p_harold",
@@ -134,6 +141,8 @@ const seedPersons: FamilyPerson[] = [
     is_living: false,
     avatar_url: null,
     is_minor: false,
+    sex: "male",
+    birth_side_of: "p_yvonne",
   },
   {
     id: "p_ruby",
@@ -147,6 +156,8 @@ const seedPersons: FamilyPerson[] = [
     is_living: true,
     avatar_url: null,
     is_minor: false,
+    sex: "female",
+    birth_side_of: "p_yvonne",
   },
   {
     id: "p_clive",
@@ -160,6 +171,8 @@ const seedPersons: FamilyPerson[] = [
     is_living: true,
     avatar_url: null,
     is_minor: false,
+    sex: "male",
+    birth_side_of: "p_yvonne",
   },
 ];
 
@@ -195,6 +208,7 @@ const seedMatches: MatchSuggestion[] = [
     explanation:
       "Both your tree and Sarah's tree reference 'Robert Johnson' born c. 1928 in Kingston, Jamaica as a Grandfather.",
     lineage_path: ["You", "David Johnson", "Robert Johnson", "Uncle Errol Johnson", "Sarah Johnson"],
+    connection_plan: { anchor_person_id: "p_robert", steps: [{ first_name: "Errol", last_name: "Johnson", birth_year: 1958, birth_place: "Kingston, Jamaica", sex: "male", relation: "child" }, { first_name: "Sarah", last_name: "Johnson", birth_year: 1989, birth_place: "Toronto, Canada", sex: "female", relation: "child" }] },
     status: "pending",
   },
   {
@@ -213,6 +227,7 @@ const seedMatches: MatchSuggestion[] = [
     explanation:
       "Your grandmother's maiden name 'Clarke' from Spanish Town appears as a sibling line in Lloyd's tree.",
     lineage_path: ["You", "David Johnson", "Pearl Clarke", "Lloyd Clarke"],
+    connection_plan: { anchor_person_id: "p_pearl", steps: [{ first_name: "Lloyd", last_name: "Clarke", birth_year: 1962, birth_place: "Miami, United States", sex: "male", relation: "sibling" }] },
     status: "pending",
   },
   {
@@ -228,6 +243,7 @@ const seedMatches: MatchSuggestion[] = [
     explanation:
       "A 'Bennett' line in Birmingham overlaps with your mother's maiden name, but no shared dated ancestor was found yet.",
     lineage_path: ["You", "Yvonne Bennett", "Bennett line (Birmingham)", "Ruth Bennett"],
+    connection_plan: { anchor_person_id: "p_harold", birth_side_of: "p_yvonne", steps: [{ first_name: "Ruth", last_name: "Bennett", birth_year: null, birth_place: "Birmingham, United Kingdom", sex: "female", relation: "sibling" }] },
     status: "dismissed",
   },
 ];
@@ -262,6 +278,16 @@ const seedTimeline: TimelineEvent[] = [
     attachments: [
       { id: "ta_1", kind: "image", url: archivalStill, name: "Kingston harbour, 1958" },
       { id: "ta_2", kind: "video", url: archivalClip.url, name: "Kingston market, archival reel" },
+    ],
+    date_label: "Spring 1958",
+    location: "Kingston Harbour, Jamaica",
+    mood: "Hopeful",
+    people_ids: ["p_robert", "p_pearl", "p_david"],
+    tags: ["New beginnings", "Work", "Harbour"],
+    captions: { ta_1: "The harbour the week Robert started work." },
+    entries: [
+      { id: "de_1", kind: "memory", author: "David Johnson", written_at: "2024-03-02", text: "I was only a baby, but Mum always said the first thing Dad bought in Kingston was a radio so we could hear the cricket." },
+      { id: "de_2", kind: "quote", author: "Pearl Johnson", written_at: "1990-06-14", text: "We came with two suitcases and a tin of my mother's sweet bread." },
     ],
   },
   {
@@ -405,8 +431,10 @@ export interface NewPersonInput {
   birth_year: string;
   birth_place: string;
   is_living: boolean;
-  relationship_type: RelationshipType;
+  relation: RelativeOption;
   anchor_person_id: string;
+  /** Married-in person whose birth-family map this relative belongs to. */
+  birth_side_of?: string;
 }
 
 interface FamilyStore {
@@ -434,10 +462,7 @@ interface FamilyStore {
     title: string;
     description: string;
   }) => void;
-  updateTimelineEvent: (
-    id: string,
-    input: { title: string; description: string; attachments: TimelineEventMedia[] },
-  ) => void;
+  updateTimelineEvent: (id: string, input: Partial<TimelineEvent>) => void;
   addEvent: (
     input: Omit<FamilyEvent, "id" | "created_by_user_id">,
     invitees: { name: string; email: string }[],
@@ -459,6 +484,12 @@ export function FamilyProvider({ children }: { children: ReactNode }) {
   const [events, setEvents] = useState<FamilyEvent[]>(seedEvents);
   const [rsvps, setRsvps] = useState<EventRsvp[]>(seedRsvps);
   const [media, setMedia] = useState<MediaItem[]>(seedMedia);
+  const personsRef = useRef(persons);
+  personsRef.current = persons;
+  const relationshipsRef = useRef(relationships);
+  relationshipsRef.current = relationships;
+  const matchesRef = useRef(matches);
+  matchesRef.current = matches;
   const [privacy, setPrivacyState] = useState<PrivacySettings>({
     geo_precision: "country_city",
     show_living_relatives: true,
@@ -483,48 +514,39 @@ export function FamilyProvider({ children }: { children: ReactNode }) {
 
   const addPerson = useCallback((input: NewPersonInput) => {
     const birthYear = input.birth_year ? Number(input.birth_year) : null;
-    const id = uid("p");
-    const isMinor =
-      input.is_living && birthYear !== null && CURRENT_YEAR - birthYear < 13;
-
-    setPersons((prev) => [
-      ...prev,
-      {
-        id,
-        created_by_user_id: "u_1",
-        linked_user_id: null,
-        first_name: input.first_name.trim(),
-        last_name: input.last_name.trim(),
-        maiden_name: input.maiden_name.trim() || null,
-        birth_year: birthYear,
-        birth_place: input.birth_place.trim() || null,
-        is_living: input.is_living,
-        avatar_url: null,
-        is_minor: isMinor,
-      },
-    ]);
-
-    const anchor = input.anchor_person_id;
-    const childLike = input.relationship_type === "child";
+    const base: Omit<FamilyPerson, "id"> = {
+      created_by_user_id: "u_1",
+      linked_user_id: null,
+      first_name: input.first_name.trim(),
+      last_name: input.last_name.trim(),
+      maiden_name: input.maiden_name.trim() || null,
+      birth_year: birthYear,
+      birth_place: input.birth_place.trim() || null,
+      is_living: input.is_living,
+      avatar_url: null,
+      is_minor: input.is_living && birthYear !== null && CURRENT_YEAR - birthYear < 13,
+      ...(input.birth_side_of ? { birth_side_of: input.birth_side_of } : {}),
+    };
+    const plan = planRelative(input.relation, input.anchor_person_id, base, personsRef.current, relationshipsRef.current, () => uid("p"));
+    setPersons((prev) => [...prev, ...plan.persons]);
     setRelationships((prev) => [
       ...prev,
-      {
-        id: uid("r"),
-        person_a_id: childLike ? anchor : id,
-        person_b_id: childLike ? id : anchor,
-        relationship_type: childLike ? "parent" : input.relationship_type,
-        verification_status: "claimed",
-      },
+      ...plan.links.map((l) => ({ id: uid("r"), person_a_id: l.a, person_b_id: l.b, relationship_type: l.type, verification_status: "claimed" as const })),
     ]);
   }, []);
 
   const setMatchStatus = useCallback((id: string, status: MatchStatus) => {
+    const match = matchesRef.current.find((m) => m.id === id);
     setMatches((prev) => prev.map((m) => (m.id === id ? { ...m, status } : m)));
-    if (status === "connected") {
-      setRelationships((prev) =>
-        prev.map((r) => (r.verification_status === "claimed" ? { ...r, verification_status: "connected" } : r)),
-      );
-    }
+    if (status !== "connected" || !match) return;
+    setRelationships((prev) =>
+      prev.map((r) => (r.verification_status === "claimed" ? { ...r, verification_status: "connected" } : r)),
+    );
+    const plan = match.connection_plan;
+    if (!plan || personsRef.current.some((p) => p.source_match_id === match.id)) return;
+    const added = joinMatch(match.id, plan, () => uid("p"));
+    setPersons((prev) => [...prev, ...added.persons]);
+    setRelationships((prev) => [...prev, ...added.links.map((l) => ({ ...l, id: uid("r") }))]);
   }, []);
 
   const addTimelineEvent = useCallback<FamilyStore["addTimelineEvent"]>((input) => {
@@ -548,10 +570,10 @@ export function FamilyProvider({ children }: { children: ReactNode }) {
         event.id === id
           ? {
               ...event,
-              title: input.title,
-              description: input.description,
-              attachments: input.attachments,
-              media_url: input.attachments.find((attachment) => attachment.kind === "image")?.url ?? null,
+              ...input,
+              ...(input.attachments
+                ? { media_url: input.attachments.find((attachment) => attachment.kind === "image")?.url ?? null }
+                : {}),
             }
           : event,
       ),

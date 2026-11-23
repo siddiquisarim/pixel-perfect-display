@@ -6,17 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import type { FamilyPerson, RelationshipType } from "@/lib/family-types";
+import { RELATIVE_OPTION_GROUPS, type RelativeOption } from "@/lib/add-relative";
+import type { FamilyPerson } from "@/lib/family-types";
 
-const RELATION_LABELS: Record<RelationshipType, string> = {
-  parent: "Parent",
-  child: "Child",
-  sibling: "Sibling",
-  grandparent: "Grandparent",
-  spouse: "Spouse",
+const HINTS: Partial<Record<RelativeOption, string>> = {
+  paternal_grandfather: "Placed above the father. If no father is recorded yet, a father placeholder is added for you to fill in.",
+  paternal_grandmother: "Placed above the father. If no father is recorded yet, a father placeholder is added for you to fill in.",
+  maternal_grandfather: "Placed above the mother. If no mother is recorded yet, a mother placeholder is added for you to fill in.",
+  maternal_grandmother: "Placed above the mother. If no mother is recorded yet, a mother placeholder is added for you to fill in.",
+  brother: "Shares the same parents on the tree.",
+  sister: "Shares the same parents on the tree.",
+  son: "Also linked to their partner as the other parent.",
+  daughter: "Also linked to their partner as the other parent.",
 };
 
 export function AddRelativeDialog({
@@ -24,8 +27,10 @@ export function AddRelativeDialog({
   open,
   onOpenChange,
   persons,
+  defaultAnchorId = "p_marcus",
   onSubmit,
 }: {
+  defaultAnchorId?: string;
   trigger?: ReactNode;
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -37,7 +42,7 @@ export function AddRelativeDialog({
     birth_year: string;
     birth_place: string;
     is_living: boolean;
-    relationship_type: RelationshipType;
+    relation: RelativeOption;
     anchor_person_id: string;
   }) => void;
 }) {
@@ -47,8 +52,8 @@ export function AddRelativeDialog({
   const [birthYear, setBirthYear] = useState("");
   const [birthPlace, setBirthPlace] = useState("");
   const [isLiving, setIsLiving] = useState(true);
-  const [relation, setRelation] = useState<RelationshipType>("parent");
-  const [anchor, setAnchor] = useState("p_marcus");
+  const [relation, setRelation] = useState<RelativeOption>("father");
+  const [anchor, setAnchor] = useState(defaultAnchorId);
 
   const willBeMinor = isLiving && birthYear !== "" && 2026 - Number(birthYear) < 13;
 
@@ -73,21 +78,24 @@ export function AddRelativeDialog({
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="grid gap-1.5">
               <Label>Relationship</Label>
-              <Select value={relation} onValueChange={(v) => setRelation(v as RelationshipType)}>
-                <SelectTrigger>
+              <Select value={relation} onValueChange={(v) => setRelation(v as RelativeOption)}>
+                <SelectTrigger aria-label="Relationship">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {(Object.keys(RELATION_LABELS) as RelationshipType[]).map((k) => (
-                    <SelectItem key={k} value={k}>
-                      {RELATION_LABELS[k]}
-                    </SelectItem>
+                  {RELATIVE_OPTION_GROUPS.map((group) => (
+                    <SelectGroup key={group.label}>
+                      <SelectLabel>{group.label}</SelectLabel>
+                      {group.options.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                      ))}
+                    </SelectGroup>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="grid gap-1.5">
-              <Label>Related to</Label>
+              <Label>Whose relative?</Label>
               <Select value={anchor} onValueChange={setAnchor}>
                 <SelectTrigger>
                   <SelectValue />
@@ -103,6 +111,7 @@ export function AddRelativeDialog({
               </Select>
             </div>
           </div>
+          {HINTS[relation] && <p className="-mt-2 text-xs text-muted-foreground">{HINTS[relation]}</p>}
 
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="grid gap-1.5">
@@ -175,7 +184,7 @@ export function AddRelativeDialog({
                 birth_year: birthYear,
                 birth_place: birthPlace,
                 is_living: isLiving,
-                relationship_type: relation,
+                relation,
                 anchor_person_id: anchor,
               })
             }
